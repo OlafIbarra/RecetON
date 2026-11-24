@@ -1,0 +1,3 @@
+<div class="cuadricula-recetas" [style.grid-template-columns]="'repeat(' + columnas + ', minmax(0, 1fr))'">
+  <app-tarjeta-receta *ngFor="let receta of recetas" [receta]="receta"></app-tarjeta-receta>
+</div>

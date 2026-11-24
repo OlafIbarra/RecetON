@@ -1,0 +1,10 @@
+<main class="oauth-redireccion" aria-live="polite">
+  <section class="oauth-redireccion__tarjeta">
+    <img class="oauth-redireccion__logo" src="/assets/brand/receton-logo-transparente.png" alt="RecetON" width="320" height="64">
+    <div class="oauth-redireccion__loader" *ngIf="!mensajeError" role="status" aria-label="Redirigiendo"></div>
+    <h1>{{ mensajeError ? 'No se pudo abrir el acceso seguro' : 'Abriendo el acceso seguro…' }}</h1>
+    <p *ngIf="!mensajeError">Te estamos llevando al inicio de sesión de RecetON.</p>
+    <p class="oauth-redireccion__error" *ngIf="mensajeError" role="alert">{{ mensajeError }}</p>
+    <button *ngIf="mensajeError" type="button" (click)="reintentar()">Intentar de nuevo</button>
+  </section>
+</main>

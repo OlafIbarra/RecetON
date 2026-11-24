@@ -1,0 +1,48 @@
+﻿# Angular
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+
+# Java y Gradle
+**/.gradle/
+**/build/
+*.class
+
+# Claves y secretos
+**/secrets/
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.pem
+.env
+.env.*
+!.env.example
+
+# Respaldos y archivos locales
+*.backup
+*.dump
+*.bak
+*.log
+/BACKUP ANTES DE NGROK/
+
+# Archivos locales de ngrok
+**/ngrok.yml
+**/ngrok.yaml
+
+# Sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Archivos temporales y respaldos internos
+**/*_respaldo.zip
+**/*.tmp
+
+# Configuración Angular duplicada
+/recetas-angular/recetas-angular/
+
+# Entornos locales de Postman (pueden contener tokens)
+pruebas-postman/*environment*.json
+pruebas-postman/*environment*.postman_environment.json

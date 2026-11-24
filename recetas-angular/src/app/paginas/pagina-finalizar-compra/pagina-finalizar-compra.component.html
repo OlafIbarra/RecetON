@@ -1,0 +1,76 @@
+<main class="compra-pagina">
+  <header class="compra-cabecera">
+    <a routerLink="/carrito" class="enlace-volver">← Volver al carrito</a>
+    <span class="marca">RecetON · COMPRA</span>
+    <div class="compra-titular">
+      <div><p class="compra-ceja">UN ÚLTIMO PASO</p><h1>Prepara tu pedido</h1><p>Revisa dónde lo enviaremos y elige cómo deseas pagar.</p></div>
+      <div class="compra-paso"><span>01</span><div><strong>Tu pedido</strong><small>Resumen y confirmación</small></div></div>
+    </div>
+  </header>
+
+  <div *ngIf="error" class="aviso aviso-error" role="alert">{{ error }}</div>
+  <div *ngIf="mensaje" class="aviso aviso-ok" role="status">{{ mensaje }}</div>
+  <div *ngIf="cargando" class="estado-carga">Preparando tu compra…</div>
+
+  <section class="compra-layout" *ngIf="!cargando && carrito">
+    <div class="compra-columna">
+      <section class="compra-panel">
+        <div class="panel-titulo"><div class="panel-numero">1</div><div><h2>Dirección de entrega</h2><p>Usaremos estos datos para tu pedido.</p></div><button type="button" class="boton-texto" (click)="nuevoFormularioDireccion()">＋ Agregar</button></div>
+        <div class="lista-opciones" *ngIf="direcciones.length; else sinDirecciones">
+          <article class="opcion-compra" *ngFor="let direccion of direcciones" [class.opcion-seleccionada]="idDireccionSeleccionada === direccion.idDireccion">
+            <label class="opcion-radio"><input type="radio" name="direccionElegida" [checked]="idDireccionSeleccionada === direccion.idDireccion" (change)="idDireccionSeleccionada = direccion.idDireccion"><span class="radio-punto"></span></label>
+            <div class="opcion-datos"><div class="opcion-etiquetas"><strong>{{ direccion.calle }} {{ direccion.numero }}</strong><span class="etiqueta-principal" *ngIf="direccion.esPrincipal">Principal</span></div><p>{{ direccion.colonia }}, {{ direccion.ciudad }}, {{ direccion.estado }}</p><small>C. P. {{ direccion.codigoPostal }}</small></div>
+            <div class="opcion-acciones"><button type="button" (click)="editarDireccion(direccion)" [disabled]="guardando">Editar</button><button type="button" class="texto-peligro" (click)="eliminarDireccion(direccion)" [disabled]="guardando">Quitar</button></div>
+          </article>
+        </div>
+        <ng-template #sinDirecciones><p class="estado-vacio">Agrega una dirección para poder registrar el pedido.</p></ng-template>
+        <form class="formulario-compra" *ngIf="mostrarFormularioDireccion" (ngSubmit)="guardarDireccion()">
+          <div class="formulario-cabecera"><h3>{{ direccionEditandoId === null ? 'Nueva dirección' : 'Editar dirección' }}</h3><button type="button" class="boton-cerrar" aria-label="Cerrar formulario" (click)="mostrarFormularioDireccion = false">×</button></div>
+          <div class="campos-grid">
+            <label>Calle *<input name="direccionCalle" [(ngModel)]="formularioDireccion.calle" required maxlength="255" autocomplete="address-line1"></label>
+            <label>Número exterior *<input name="direccionNumero" [(ngModel)]="formularioDireccion.numero" required maxlength="255" autocomplete="address-line2"></label>
+            <label>Colonia *<input name="direccionColonia" [(ngModel)]="formularioDireccion.colonia" required maxlength="255"></label>
+            <label>Ciudad o municipio *<input name="direccionCiudad" [(ngModel)]="formularioDireccion.ciudad" required maxlength="255" autocomplete="address-level2"></label>
+            <label>Estado *<input name="direccionEstado" [(ngModel)]="formularioDireccion.estado" required maxlength="255" autocomplete="address-level1"></label>
+            <label>Código postal *<input name="direccionCodigoPostal" [(ngModel)]="formularioDireccion.codigoPostal" required pattern="[0-9]{5}" maxlength="5" inputmode="numeric" autocomplete="postal-code" placeholder="55000"></label>
+          </div>
+          <label class="check-principal"><input type="checkbox" name="direccionPrincipal" [(ngModel)]="formularioDireccion.esPrincipal"> Guardar como dirección principal</label>
+          <div class="formulario-botones"><button class="boton-principal" type="submit" [disabled]="guardando">{{ guardando ? 'Guardando…' : 'Guardar dirección' }}</button><button type="button" class="boton-secundario" (click)="mostrarFormularioDireccion = false">Cancelar</button></div>
+        </form>
+      </section>
+
+      <section class="compra-panel">
+        <div class="panel-titulo"><div class="panel-numero">2</div><div><h2>Método de pago</h2><p>Solo registramos el tipo y, si aplica, los últimos cuatro dígitos.</p></div><button type="button" class="boton-texto" (click)="nuevoFormularioMetodo()">＋ Agregar</button></div>
+        <div class="lista-opciones" *ngIf="metodosPago.length; else sinMetodos">
+          <article class="opcion-compra" *ngFor="let metodo of metodosPago" [class.opcion-seleccionada]="idMetodoSeleccionado === metodo.idMetodoPago">
+            <label class="opcion-radio"><input type="radio" name="metodoElegido" [checked]="idMetodoSeleccionado === metodo.idMetodoPago" (change)="idMetodoSeleccionado = metodo.idMetodoPago"><span class="radio-punto"></span></label>
+            <div class="metodo-icono" aria-hidden="true">{{ metodo.tipo.startsWith('Tarjeta') ? '▰' : metodo.tipo === 'Transferencia' ? '⇄' : '◉' }}</div>
+            <div class="opcion-datos"><div class="opcion-etiquetas"><strong>{{ metodo.tipo }}</strong><span class="etiqueta-principal" *ngIf="metodo.esPrincipal">Principal</span></div><p *ngIf="metodo.ultimos4Digitos">Termina en {{ metodo.ultimos4Digitos }}</p><small *ngIf="!metodo.ultimos4Digitos">Método guardado</small></div>
+            <div class="opcion-acciones"><button type="button" (click)="editarMetodo(metodo)" [disabled]="guardando">Editar</button><button type="button" class="texto-peligro" (click)="eliminarMetodo(metodo)" [disabled]="guardando">Quitar</button></div>
+          </article>
+        </div>
+        <ng-template #sinMetodos><p class="estado-vacio">Agrega una forma de pago para continuar.</p></ng-template>
+        <form class="formulario-compra" *ngIf="mostrarFormularioMetodo" (ngSubmit)="guardarMetodo()">
+          <div class="formulario-cabecera"><h3>{{ metodoEditandoId === null ? 'Nuevo método' : 'Editar método' }}</h3><button type="button" class="boton-cerrar" aria-label="Cerrar formulario" (click)="mostrarFormularioMetodo = false">×</button></div>
+          <label>Tipo de método *<select name="tipoMetodo" [(ngModel)]="formularioMetodo.tipo" required><option value="Efectivo al recibir">Efectivo al recibir</option><option value="Tarjeta de crédito">Tarjeta de crédito</option><option value="Tarjeta de débito">Tarjeta de débito</option><option value="Transferencia">Transferencia</option></select></label>
+          <label *ngIf="esTarjeta()">Últimos cuatro dígitos *<input name="ultimosCuatro" [(ngModel)]="formularioMetodo.ultimos4Digitos" required pattern="[0-9]{4}" maxlength="4" inputmode="numeric" placeholder="1234"><small>No escribas el número completo ni el CVV.</small></label>
+          <label class="check-principal"><input type="checkbox" name="metodoPrincipal" [(ngModel)]="formularioMetodo.esPrincipal"> Guardar como método principal</label>
+          <div class="formulario-botones"><button class="boton-principal" type="submit" [disabled]="guardando">{{ guardando ? 'Guardando…' : 'Guardar método' }}</button><button type="button" class="boton-secundario" (click)="mostrarFormularioMetodo = false">Cancelar</button></div>
+        </form>
+        <p class="nota-demo"><strong>Importante:</strong> esta versión registra pedidos de demostración. No realiza cobros ni procesa números completos de tarjeta.</p>
+      </section>
+    </div>
+
+    <aside class="resumen-pedido">
+      <span class="resumen-ceja">TU SELECCIÓN</span><h2>Resumen de compra</h2>
+      <div class="resumen-linea" *ngFor="let item of carrito.items"><div><strong>{{ item.nombreProducto }}</strong><small>{{ item.cantidad }} × {{ formatoPrecio(item.precio) }}</small></div><span>{{ formatoPrecio(item.subtotal) }}</span></div>
+      <div class="resumen-linea"><span>Artículos</span><span>{{ carrito.items.length }}</span></div>
+      <div class="resumen-total"><span>Total del pedido</span><strong>{{ formatoPrecio(carrito.subtotal) }}</strong></div>
+      <p class="resumen-aviso">Al confirmar, se registrará el pedido y se actualizará el stock. No se realizará un pago real.</p>
+      <button type="button" class="boton-principal boton-confirmar" (click)="confirmarPedido()" [disabled]="guardando || !carrito.items.length || !direcciones.length || !metodosPago.length">{{ guardando ? 'Registrando pedido…' : 'Confirmar pedido' }}</button>
+      <a routerLink="/carrito" class="enlace-volver-resumen">Volver a revisar el carrito</a>
+    </aside>
+  </section>
+  <section class="estado-vacio compra-sin-productos" *ngIf="!cargando && carrito && !carrito.items.length"><h2>Tu carrito está vacío</h2><p>Agrega productos desde la tienda antes de continuar.</p><a class="boton-principal" routerLink="/productos">Ir a la tienda</a></section>
+  <footer class="pie-legal"><a routerLink="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

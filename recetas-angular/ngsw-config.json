@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "navigationUrls": [
+    "/**",
+    "!/**/*.*",
+    "!/**/*__*",
+    "!/**/*__*/**",
+    "!/api",
+    "!/api/**",
+    "!/oauth2",
+    "!/oauth2/**",
+    "!/.well-known",
+    "!/.well-known/**",
+    "!/login",
+    "!/login/**",
+    "!/logout",
+    "!/logout/**",
+    "!/error",
+    "!/error/**",
+    "!/saludo",
+    "!/saludo/**",
+    "!/adios",
+    "!/adios/**"
+  ],
+  "assetGroups": [
+    {
+      "name": "app-shell",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "receton-static-assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "!/assets/receton-config.json",
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|woff|woff2|ttf)"
+        ]
+      }
+    }
+  ]
+}

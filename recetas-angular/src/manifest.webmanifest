@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "RecetON — Sabores que conectan",
+  "short_name": "RecetON",
+  "description": "Descubre, organiza y comparte recetas con RecetON.",
+  "lang": "es-MX",
+  "start_url": "/inicio-sesion",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#103b2b",
+  "theme_color": "#103b2b",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "assets/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icons/icon-maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

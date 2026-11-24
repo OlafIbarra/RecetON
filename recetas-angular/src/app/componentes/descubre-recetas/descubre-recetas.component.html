@@ -1,0 +1,183 @@
+<section class="descubre" [attr.data-dispositivo]="dispositivo" aria-labelledby="titulo-descubre">
+  <header class="descubre-encabezado">
+    <div>
+      <p class="descubre-etiqueta">INSPIRACIÓN PARA COCINAR</p>
+      <h2 id="titulo-descubre">Descubre recetas</h2>
+      <p class="descubre-intro" *ngIf="dispositivo !== 'reloj'">Encuentra algo delicioso para preparar hoy.</p>
+    </div>
+    <button type="button" class="boton-sorpresa" (click)="sorprender()" [disabled]="cargando" aria-label="Mostrar una receta sorpresa">
+      <span aria-hidden="true">✦</span> {{ dispositivo === 'reloj' ? 'Sorpresa' : 'Sorpréndeme' }}
+    </button>
+  </header>
+
+  <div class="descubre-filtros" *ngIf="dispositivo !== 'reloj'">
+    <form class="formulario-filtros" (ngSubmit)="aplicarFiltros()">
+      <div class="filtro-texto">
+        <label for="busqueda-externa">Buscar por nombre o ingrediente</label>
+        <div class="fila-busqueda">
+          <select id="tipo-busqueda-externa" name="tipoBusqueda" [(ngModel)]="tipoBusqueda" aria-label="Tipo de búsqueda">
+            <option value="nombre">Nombre del platillo</option>
+            <option value="ingrediente">Ingrediente principal</option>
+          </select>
+          <input id="busqueda-externa" name="textoBusqueda" [(ngModel)]="textoBusqueda" maxlength="80" placeholder="Ej. pasta, pollo…" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="filtro-selectores">
+        <div>
+          <label for="categoria-externa">Categoría</label>
+          <select id="categoria-externa" name="categoria" [(ngModel)]="categoriaSeleccionada">
+            <option value="">Todas las categorías</option>
+            <option *ngFor="let categoria of categorias" [value]="categoria">{{ etiquetaCategoria(categoria) }}</option>
+          </select>
+        </div>
+        <div>
+          <label for="origen-externo">País / cocina</label>
+          <select id="origen-externo" name="origen" [(ngModel)]="origenSeleccionado">
+            <option value="">Todos los países</option>
+            <option *ngFor="let origen of origenes" [value]="origen.valor">{{ origen.etiqueta }}</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="ayuda-filtros">Combina categoría, país o ingrediente para encontrar lo que se te antoja.</p>
+      <div class="acciones-filtros">
+        <button type="submit" class="boton-aplicar" [disabled]="cargando">Aplicar filtros</button>
+        <button type="button" class="limpiar-filtros" (click)="limpiarFiltros()">Limpiar búsqueda</button>
+      </div>
+    </form>
+  </div>
+
+  <p class="descubre-estado" *ngIf="cargando" role="status">Buscando ideas para cocinar…</p>
+  <p class="descubre-error" *ngIf="error" role="status">{{ error }}</p>
+  <p class="descubre-nota-catalogo" *ngIf="avisoCatalogos && dispositivo !== 'reloj'">{{ avisoCatalogos }}</p>
+
+  <section class="descubre-resultados" *ngIf="resultados.length > 0 && dispositivo !== 'reloj'" aria-labelledby="titulo-resultados-externos">
+    <div class="resultados-encabezado">
+      <div>
+        <p class="resultados-sello">MÁS IDEAS PARA TI</p>
+        <h3 id="titulo-resultados-externos">Ideas encontradas <span>({{ resultados.length }})</span></h3>
+      </div>
+    </div>
+    <p class="criterios-activos" *ngIf="criteriosActivos.length">Filtros aplicados: {{ criteriosActivos.join(' · ') }}</p>
+    <div class="tarjetas-resultados">
+      <button type="button" class="tarjeta-resultado" *ngFor="let receta of resultadosVisibles" (click)="seleccionarReceta(receta)" [class.seleccionada]="recetaSeleccionada?.id === receta.id" [attr.aria-pressed]="recetaSeleccionada?.id === receta.id">
+        <img [src]="receta.imagen" [alt]="'Imagen de ' + receta.nombre" loading="lazy">
+        <span class="resultado-nombre">{{ receta.nombre }}</span>
+        <span class="resultado-meta" *ngIf="receta.categoria !== 'Sin categoría' || receta.origen !== 'Origen no especificado'">
+          <ng-container *ngIf="receta.categoria !== 'Sin categoría'">{{ receta.categoria }}</ng-container>
+          <ng-container *ngIf="receta.categoria !== 'Sin categoría' && receta.origen !== 'Origen no especificado'"> · </ng-container>
+          <ng-container *ngIf="receta.origen !== 'Origen no especificado'">{{ receta.origen }}</ng-container>
+        </span>
+      </button>
+    </div>
+    <div class="paginacion-resultados" *ngIf="resultados.length > 8">
+      <p>Mostrando {{ resultadosVisibles.length }} de {{ resultados.length }} recetas.</p>
+      <div class="acciones-paginacion">
+        <button type="button" class="boton-secundario" *ngIf="hayMasResultados" (click)="mostrarMasResultados()">Mostrar otras {{ pasoResultados }}</button>
+        <button type="button" class="boton-secundario boton-suave" *ngIf="limiteResultados > pasoResultados" (click)="mostrarMenosResultados()">Mostrar menos</button>
+      </div>
+    </div>
+  </section>
+
+  <article class="detalle-externo" *ngIf="recetaSeleccionada as receta">
+    <div class="detalle-cabecera">
+      <img class="detalle-imagen" [src]="receta.imagen" [alt]="'Imagen de ' + receta.nombre" loading="lazy">
+      <div class="detalle-titulo">
+        <span class="sello-fuente">¡A cocinar!</span>
+        <h3>{{ receta.nombre }}</h3>
+        <p>{{ receta.categoria }} · {{ receta.origen }}</p>
+      </div>
+    </div>
+    <p class="descubre-estado" *ngIf="cargandoDetalle" role="status">Preparando la receta en español…</p>
+    <ng-container *ngIf="!cargandoDetalle">
+      <div class="detalle-contenido" *ngIf="receta.ingredientes.length > 0 || receta.instrucciones">
+        <section class="ingredientes-externos" *ngIf="receta.ingredientes.length > 0">
+          <h4>Ingredientes</h4>
+          <ul>
+            <li *ngFor="let ingrediente of receta.ingredientes.slice(0, dispositivo === 'reloj' ? 6 : 20); let i = index">
+              <label class="ingrediente-check" *ngIf="dispositivo !== 'reloj'">
+                <input type="checkbox" [checked]="ingredientesMarcados.has(i)" (change)="actualizarIngrediente(i, $any($event.target).checked)" [attr.aria-label]="'Marcar ' + ingrediente.nombre + ' como listo'">
+                <span class="ingrediente-nombre" [class.ingrediente-listo]="ingredientesMarcados.has(i)">{{ ingrediente.nombre }}</span>
+              </label>
+              <span class="ingrediente-nombre" *ngIf="dispositivo === 'reloj'">{{ ingrediente.nombre }}</span>
+              <span class="ingrediente-medida" *ngIf="ingrediente.medida">{{ ingrediente.medida }}</span>
+            </li>
+          </ul>
+          <p class="progreso-ingredientes" *ngIf="dispositivo !== 'reloj' && receta.ingredientes.length">
+            {{ ingredientesMarcados.size }} de {{ (receta.ingredientes.length > 20 ? 20 : receta.ingredientes.length) }} ingredientes visibles listos
+          </p>
+          <p class="nota-receta" *ngIf="dispositivo === 'reloj' && receta.ingredientes.length > 6">Mostrando 6 ingredientes en esta pantalla.</p>
+        </section>
+        <section class="instrucciones-externas" *ngIf="receta.instrucciones">
+          <div class="preparacion-encabezado">
+            <h4>Preparación</h4>
+            <button type="button" class="boton-modo-cocina" *ngIf="!modoCocina" (click)="abrirModoCocina()" [disabled]="!pasosPreparacion.length" aria-label="Iniciar preparación paso a paso">
+              Empezar a cocinar
+            </button>
+            <button type="button" class="boton-modo-cocina boton-cancelar-cocina" *ngIf="modoCocina" (click)="cerrarModoCocina()">Ver toda la preparación</button>
+          </div>
+          <p *ngIf="!modoCocina">{{ receta.instrucciones }}</p>
+
+          <div class="modo-cocina-panel" *ngIf="modoCocina" aria-labelledby="titulo-paso-cocina">
+            <ng-container *ngIf="!modoCocinaCompletado; else cocinaTerminada">
+              <div class="progreso-paso-cocina">
+                <span>Paso {{ pasoActual + 1 }} de {{ pasosPreparacion.length }}</span>
+                <span>{{ progresoCocina }}%</span>
+              </div>
+              <div class="barra-progreso-cocina" role="progressbar" [attr.aria-valuenow]="progresoCocina" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso de la preparación">
+                <span [style.width.%]="progresoCocina"></span>
+              </div>
+              <h5 id="titulo-paso-cocina" class="numero-paso-cocina">Paso {{ pasoActual + 1 }}</h5>
+              <p class="texto-paso-cocina" aria-live="polite">{{ pasosPreparacion[pasoActual] }}</p>
+              <div class="asistencia-paso-cocina" aria-label="Ayudas para seguir la receta">
+                <div class="lectura-voz-controles">
+                  <button type="button" class="boton-paso-secundario" (click)="leerPasoActual()" [disabled]="!vozDisponible || lecturaEnVozAlta" aria-label="Leer la instrucción actual en voz alta">Leer paso en voz alta</button>
+                  <button type="button" class="boton-paso-secundario" *ngIf="lecturaEnVozAlta" (click)="detenerLectura()">Detener lectura</button>
+                </div>
+                <p class="aviso-asistencia" *ngIf="avisoLecturaVoz" role="status">{{ avisoLecturaVoz }}</p>
+                <section class="temporizador-cocina" aria-labelledby="titulo-temporizador-cocina">
+                  <div class="temporizador-cabecera">
+                    <h6 id="titulo-temporizador-cocina">Temporizador</h6>
+                    <output class="temporizador-reloj" aria-live="off" aria-label="Tiempo restante">{{ tiempoRestanteTexto }}</output>
+                  </div>
+                  <div class="temporizador-configuracion">
+                    <label>Minutos
+                      <input type="number" min="0" max="999" step="1" [(ngModel)]="minutosTemporizador" (ngModelChange)="actualizarDuracionTemporizador()" [disabled]="temporizadorActivo" aria-label="Minutos del temporizador">
+                    </label>
+                    <label>Segundos
+                      <input type="number" min="0" max="59" step="1" [(ngModel)]="segundosTemporizador" (ngModelChange)="actualizarDuracionTemporizador()" [disabled]="temporizadorActivo" aria-label="Segundos del temporizador">
+                    </label>
+                  </div>
+                  <div class="temporizador-acciones">
+                    <button type="button" class="boton-paso-principal" *ngIf="!temporizadorActivo" (click)="iniciarTemporizador()">{{ temporizadorPausado ? 'Continuar' : 'Iniciar' }}</button>
+                    <button type="button" class="boton-paso-secundario" *ngIf="temporizadorActivo" (click)="pausarTemporizador()">Pausar</button>
+                    <button type="button" class="boton-paso-secundario" (click)="reiniciarTemporizador()">Reiniciar</button>
+                  </div>
+                  <p class="aviso-asistencia" role="status" aria-live="polite" *ngIf="avisoTemporizador">{{ avisoTemporizador }}</p>
+                </section>
+              </div>
+              <div class="acciones-paso-cocina">
+                <button type="button" class="boton-paso-secundario" (click)="retrocederPaso()" [disabled]="pasoActual === 0" aria-label="Ver paso anterior">Anterior</button>
+                <button type="button" class="boton-paso-principal" (click)="avanzarPaso()">{{ pasoActual === pasosPreparacion.length - 1 ? 'Terminar preparación' : 'Siguiente paso' }}</button>
+              </div>
+            </ng-container>
+            <ng-template #cocinaTerminada>
+              <div class="cocina-terminada" role="status">
+                <span aria-hidden="true">✓</span>
+                <h5>¡Listo para disfrutar!</h5>
+                <p>Has recorrido todos los pasos de esta receta.</p>
+                <button type="button" class="boton-paso-principal" (click)="cerrarModoCocina()">Volver a la receta</button>
+              </div>
+            </ng-template>
+          </div>
+        </section>
+      </div>
+      <p class="descubre-nota" *ngIf="!receta.instrucciones && !receta.ingredientes.length">No hay más detalles disponibles para esta receta.</p>
+      <div class="enlaces-externos">
+        <a *ngIf="receta.fuente" [href]="receta.fuente" target="_blank" rel="noopener noreferrer">Ver fuente original ↗</a>
+        <a *ngIf="receta.video" [href]="receta.video" target="_blank" rel="noopener noreferrer">Ver video ↗</a>
+      </div>
+    </ng-container>
+  </article>
+</section>

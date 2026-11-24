@@ -1,0 +1,57 @@
+:host {
+  display: contents;
+}
+
+.acciones-ruta {
+  position: fixed;
+  z-index: 1200;
+  right: clamp(12px, 2.2vw, 28px);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(210, 226, 210, .95);
+  border-radius: 999px;
+  background: rgba(250, 253, 248, .94);
+  box-shadow: 0 12px 34px rgba(10, 43, 29, .19);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.accion-ruta {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: 750 .82rem/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.accion-ruta:hover { transform: translateY(-2px); }
+.accion-ruta:focus-visible { outline: 3px solid #8abf78; outline-offset: 3px; }
+.accion-regresar { color: #1b5238; background: #fff; border-color: #dce9d8; }
+.accion-regresar:hover { background: #f0f7ed; }
+.accion-inicio { color: #fff; background: linear-gradient(135deg, #174a32, #26734c); box-shadow: 0 5px 14px rgba(20, 76, 49, .2); }
+.accion-inicio:hover { background: linear-gradient(135deg, #0f3e29, #1f6341); }
+.icono-ruta { font-size: 1.18rem; line-height: .7; }
+.icono-casa { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.acciones-ruta--sobre-barra { bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
+
+@media (max-width: 520px) {
+  .acciones-ruta { right: 10px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); gap: 5px; padding: 5px; }
+  .acciones-ruta--sobre-barra { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .accion-ruta { min-height: 38px; gap: 6px; padding: 0 11px; font-size: .74rem; }
+  .icono-casa { width: 14px; height: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accion-ruta { transition: none; }
+}

@@ -1,0 +1,14 @@
+<nav
+  *ngIf="visible"
+  class="acciones-ruta"
+  [class.acciones-ruta--sobre-barra]="sobreBarraInferior"
+  aria-label="Navegación de RecetON">
+  <button type="button" class="accion-ruta accion-regresar" (click)="regresar()" aria-label="Regresar a la pantalla anterior">
+    <span class="icono-ruta" aria-hidden="true">←</span>
+    <span>Regresar</span>
+  </button>
+  <button type="button" class="accion-ruta accion-inicio" (click)="volverAlInicio()" aria-label="Volver al selector de pantallas">
+    <svg class="icono-casa" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+    <span>Volver al inicio</span>
+  </button>
+</nav>

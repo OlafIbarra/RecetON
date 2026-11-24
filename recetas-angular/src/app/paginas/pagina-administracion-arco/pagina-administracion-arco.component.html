@@ -1,0 +1,29 @@
+<main class="arco-admin-page">
+  <header class="arco-admin-hero">
+    <a routerLink="/administracion" class="back-link">← Volver a administración</a>
+    <span class="eyebrow">RecetON · GESTIÓN RESPONSABLE</span>
+    <h1>Solicitudes <em>ARCO</em></h1>
+    <p>Revisa las solicitudes recibidas, registra el estado del trámite y deja una respuesta clara para la persona solicitante.</p>
+  </header>
+
+  <p *ngIf="error" class="feedback feedback-error" role="alert">{{ error }}</p>
+  <p *ngIf="mensaje" class="feedback feedback-success" role="status">{{ mensaje }}</p>
+  <div class="bar-listado"><div><h2>Solicitudes recibidas</h2><p>Los cambios quedan registrados en PostgreSQL.</p></div><button type="button" class="soft-button" (click)="cargarSolicitudes()" [disabled]="cargando">Actualizar</button></div>
+
+  <p *ngIf="cargando" class="feedback" role="status">Cargando solicitudes…</p>
+  <section *ngIf="!cargando && !solicitudes.length" class="empty-state"><span aria-hidden="true">✓</span><h2>No hay solicitudes todavía</h2><p>Cuando una persona autenticada envíe una solicitud desde la página de privacidad, aparecerá aquí.</p></section>
+
+  <section class="request-list" *ngIf="!cargando && solicitudes.length">
+    <article class="request-card" *ngFor="let s of solicitudes">
+      <header class="request-head"><div><span class="request-id">SOLICITUD #{{ s.idSolicitud }}</span><h2>{{ s.derecho }}</h2></div><span class="status-badge">{{ s.estado }}</span></header>
+      <div class="request-meta"><span><strong>Usuario:</strong> {{ s.nombreUsuario || ('ID ' + s.idUsuario) }}</span><span><strong>Correo de la cuenta:</strong> {{ s.correo || 'No registrado' }}</span><span><strong>Recibida:</strong> {{ s.fechaSolicitud | date:'medium' }}</span></div>
+      <div class="request-description"><span>Descripción de la persona solicitante</span><p>{{ s.descripcion }}</p></div>
+      <form class="request-form" (ngSubmit)="guardar(s)">
+        <label>Estado del trámite<select name="estado-{{ s.idSolicitud }}" [(ngModel)]="s.estadoEdicion" required><option *ngFor="let estado of estados" [ngValue]="estado">{{ estado }}</option></select></label>
+        <label>Respuesta o nota para la persona solicitante<textarea name="respuesta-{{ s.idSolicitud }}" [(ngModel)]="s.respuestaEdicion" rows="3" maxlength="2000" placeholder="Registra la respuesta (máximo 2000 caracteres). Para marcar como atendida o no procedente es obligatoria."></textarea></label>
+        <div class="request-footer"><p *ngIf="s.fechaResolucion"><strong>Resolución registrada:</strong> {{ s.fechaResolucion | date:'medium' }} · {{ s.nombreResponsable || 'Responsable' }}</p><button type="submit" class="primary-button" [disabled]="guardandoId !== null">{{ guardandoId === s.idSolicitud ? 'Guardando…' : 'Guardar seguimiento' }}</button></div>
+      </form>
+    </article>
+  </section>
+  <footer class="admin-footer"><a routerLink="/privacidad">Ver aviso de privacidad</a><span>El registro de una solicitud no equivale por sí mismo a su resolución.</span></footer>
+</main>

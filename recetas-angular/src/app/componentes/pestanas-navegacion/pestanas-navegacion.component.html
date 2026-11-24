@@ -1,0 +1,7 @@
+<nav class="fila-pestanas" aria-label="Navegación rápida">
+  <a class="pestana" *ngFor="let pestana of pestanas; let i = index"
+     [routerLink]="pestana.ruta" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: true }">
+    <app-icono [nombre]="pestana.icono"></app-icono>
+    {{ pestana.etiqueta }}
+  </a>
+</nav>

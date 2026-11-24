@@ -1,0 +1,89 @@
+<main class="privacidad-pagina">
+  <header class="privacidad-hero">
+    <button class="privacidad-volver" type="button" (click)="regresarPantallaAnterior()">← Regresar a la pantalla anterior</button>
+    <div class="privacidad-hero-contenido">
+      <span class="privacidad-sobrelinea">RecetON · CENTRO DE PRIVACIDAD</span>
+      <h1>Tu cocina, tus datos, <em>tu control.</em></h1>
+      <p>Queremos que disfrutes las recetas con claridad sobre la información que utilizas, para qué sirve y cómo puedes ejercer tus derechos.</p>
+      <div class="privacidad-chips"><span>Datos personales</span><span>Transparencia</span><span>Derechos ARCO</span></div>
+    </div>
+    <div class="privacidad-hero-grafico" aria-hidden="true"><img src="/assets/icons/icon-192x192.png" alt=""><i></i><b></b></div>
+  </header>
+
+  <section class="privacidad-responsable panel-privacidad">
+    <div class="numero-seccion">01 / Responsable</div>
+    <div><h2>¿Quién cuida tus datos?</h2><p>El responsable indicado para RecetON es <strong>José Olaf Ibarra García</strong>, con ubicación en <strong>Tecámac, Estado de México</strong>.</p><p class="aviso-contacto"><strong>Solicitudes desde la aplicación:</strong> las personas con sesión pueden registrar solicitudes en este módulo y consultar su estado. El responsable debe mantener también publicado un canal alternativo de contacto para las solicitudes que no se presenten desde la aplicación.</p></div>
+  </section>
+
+  <section class="privacidad-seccion">
+    <div class="privacidad-titulos"><span class="numero-seccion">02 / Tratamiento</span><h2>¿Qué información puede utilizar la aplicación?</h2><p>Los datos dependen de las funciones que uses y de la información que proporciones.</p></div>
+    <div class="tarjetas-datos">
+      <article class="tarjeta-dato"><span class="dato-icono">01</span><h3>Cuenta y acceso</h3><p>Nombre de usuario, nombre completo, correo electrónico, credencial almacenada como hash, estado de la cuenta y rol asignado.</p></article>
+      <article class="tarjeta-dato"><span class="dato-icono">02</span><h3>Recetas y comunidad</h3><p>Recetas que publiques, favoritos, puntuaciones y comentarios vinculados con tu cuenta.</p></article>
+      <article class="tarjeta-dato"><span class="dato-icono">03</span><h3>Actividad de la tienda</h3><p>Productos consultados y artículos/cantidades que agregues al carrito para mantener su contenido.</p></article>
+      <article class="tarjeta-dato"><span class="dato-icono">04</span><h3>Datos técnicos</h3><p>Información mínima necesaria para mantener la sesión, responder solicitudes y ayudar a proteger la plataforma.</p></article>
+    </div>
+    <p class="nota-privacidad">La base de datos contempla tablas para direcciones y métodos de pago; su tratamiento debe describirse con mayor detalle cuando esas funciones se habiliten. La versión actual no ofrece un proceso de pago en línea ni solicita el número completo o el CVV de una tarjeta.</p>
+  </section>
+
+  <section class="privacidad-seccion privacidad-fines">
+    <div class="privacidad-titulos"><span class="numero-seccion">03 / Finalidades</span><h2>¿Para qué usamos los datos?</h2></div>
+    <div class="lista-fines">
+      <div><span>✓</span><p><strong>Administrar tu cuenta.</strong> Identificarte, iniciar sesión, mantener tu sesión y aplicar los permisos de tu rol.</p></div>
+      <div><span>✓</span><p><strong>Ofrecer las funciones solicitadas.</strong> Mostrar recetas, conservar favoritos, guardar valoraciones y mantener el carrito.</p></div>
+      <div><span>✓</span><p><strong>Cuidar la integridad del servicio.</strong> Mantener registros necesarios para evitar operaciones no autorizadas y corregir fallos.</p></div>
+      <div><span>✓</span><p><strong>Mostrar recetas externas.</strong> RecetON consulta la API pública TheMealDB para mostrar contenido de recetas. El proyecto no necesita enviar tus datos de perfil a esa API para realizar una consulta de recetas.</p></div>
+    </div>
+  </section>
+
+  <section class="privacidad-seccion arco-seccion">
+    <div class="privacidad-titulos"><span class="numero-seccion">04 / Tus derechos</span><h2>Conoce tus derechos ARCO</h2><p>Puedes solicitar el ejercicio de estos derechos respecto de tus datos personales, conforme a la normativa aplicable y a las excepciones legales que correspondan.</p></div>
+    <div class="arco-grid">
+      <article class="arco-card"><span class="arco-letra">A</span><h3>Acceso</h3><p>Conocer qué datos personales se tienen sobre ti y obtener información sobre su tratamiento.</p></article>
+      <article class="arco-card"><span class="arco-letra">R</span><h3>Rectificación</h3><p>Solicitar que se corrijan datos inexactos, incompletos o desactualizados.</p></article>
+      <article class="arco-card"><span class="arco-letra">C</span><h3>Cancelación</h3><p>Solicitar la eliminación de datos cuando corresponda. Puede haber supuestos legales que requieran conservarlos o bloquearlos durante cierto periodo.</p></article>
+      <article class="arco-card"><span class="arco-letra">O</span><h3>Oposición</h3><p>Oponerte al tratamiento en los casos previstos por la normativa aplicable, explicando tu situación y los motivos correspondientes.</p></article>
+    </div>
+  </section>
+
+  <section class="privacidad-seccion pasos-arco">
+    <div class="privacidad-titulos"><span class="numero-seccion">05 / Solicitud</span><h2>Registra una solicitud ARCO</h2><p>Las solicitudes enviadas desde este formulario se guardan en PostgreSQL y se vinculan con la cuenta autenticada. El registro confirma recepción, no la resolución automática de la petición.</p></div>
+
+    <div class="arco-restriccion" *ngIf="!sesionActiva">
+      <div><strong>Inicia sesión para enviar tu solicitud</strong><p>Tu sesión permite vincular la solicitud con tu cuenta sin pedirte que vuelvas a escribir tu nombre o correo.</p></div>
+      <a class="boton-arco-principal" href="/inicio-sesion">Iniciar sesión</a>
+    </div>
+
+    <form *ngIf="sesionActiva" class="formulario-arco" (ngSubmit)="enviarSolicitud()">
+      <label>Derecho que deseas ejercer
+        <select name="derechoSeleccionado" [(ngModel)]="derechoSeleccionado" required>
+          <option value="Acceso">Acceso</option><option value="Rectificación">Rectificación</option><option value="Cancelación">Cancelación</option><option value="Oposición">Oposición</option>
+        </select>
+      </label>
+      <label>Describe tu solicitud *
+        <textarea name="descripcionSolicitud" [(ngModel)]="descripcionSolicitud" rows="5" maxlength="2000" required aria-describedby="ayuda-minimo-arco" placeholder="Explica qué datos personales se relacionan con tu solicitud y qué necesitas que se revise o realice."></textarea>
+        <small class="contador-arco" id="ayuda-minimo-arco">{{ descripcionSolicitud.trim().length }} / 2000 caracteres · Escribe al menos 10 para enviar.</small>
+      </label>
+      <div class="acciones-arco"><button class="boton-arco-principal" type="submit" [disabled]="enviandoSolicitud">{{ enviandoSolicitud ? 'Registrando solicitud…' : 'Enviar solicitud ARCO' }}</button><button class="boton-arco-secundario" type="button" (click)="cargarSolicitudes()" [disabled]="cargandoHistorial">Actualizar historial</button></div>
+    </form>
+
+    <p class="estado-arco" *ngIf="mensajeEstado" role="status">{{ mensajeEstado }}</p>
+    <p class="estado-arco estado-error-arco" *ngIf="errorEstado" role="alert">{{ errorEstado }}</p>
+
+    <section class="historial-arco" *ngIf="sesionActiva" aria-labelledby="historial-arco-titulo">
+      <div class="historial-arco-cabecera"><div><span class="numero-seccion">SEGUIMIENTO</span><h3 id="historial-arco-titulo">Mis solicitudes</h3><p>Solo se muestran las solicitudes vinculadas con tu sesión.</p></div><span class="contador-solicitudes">{{ solicitudes.length }} {{ solicitudes.length === 1 ? 'solicitud' : 'solicitudes' }}</span></div>
+      <p *ngIf="cargandoHistorial" class="sin-solicitudes" role="status">Cargando historial…</p>
+      <p *ngIf="!cargandoHistorial && solicitudes.length === 0" class="sin-solicitudes">Todavía no has registrado solicitudes desde RecetON.</p>
+      <article class="solicitud-arco-card" *ngFor="let solicitud of solicitudes">
+        <header><div><span class="folio-arco">FOLIO #{{ solicitud.idSolicitud }}</span><h4>{{ solicitud.derecho }}</h4></div><span class="estado-solicitud" [class.estado-final]="solicitud.estado === 'Atendida'" [class.estado-pendiente]="solicitud.estado !== 'Atendida'">{{ solicitud.estado }}</span></header>
+        <p class="descripcion-solicitud-arco">{{ solicitud.descripcion }}</p>
+        <div class="metadatos-solicitud"><span>Recibida: {{ solicitud.fechaSolicitud | date:'medium' }}</span><span *ngIf="solicitud.fechaResolucion">Resolución: {{ solicitud.fechaResolucion | date:'medium' }}</span></div>
+        <div class="respuesta-arco" *ngIf="solicitud.respuesta"><strong>Respuesta del responsable</strong><p>{{ solicitud.respuesta }}</p><small *ngIf="solicitud.nombreResponsable">Responsable: {{ solicitud.nombreResponsable }}</small></div>
+      </article>
+    </section>
+    <div class="limite-arco"><strong>Qué significa el estado:</strong> una solicitud puede requerir revisión, información adicional o una respuesta formal. No se resuelve automáticamente al guardarse y su registro no sustituye los plazos ni los requisitos aplicables.</div>
+  </section>
+
+  <section class="privacidad-pie-nota"><h2>Protección y cambios al aviso</h2><p>RecetON debe aplicar medidas técnicas y organizativas adecuadas para proteger la información, limitar accesos y mantener confidencialidad. Si cambian las funciones o la forma de tratar los datos, este aviso deberá actualizarse y ponerse nuevamente a disposición de las personas usuarias.</p><p>Última actualización: octubre de 2026. Este aviso toma como referencia la <a href="https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPDPPP.pdf" target="_blank" rel="noopener noreferrer">Ley Federal de Protección de Datos Personales en Posesión de los Particulares</a>. Esta página se integra en un proyecto académico; el responsable debe revisar el aviso, confirmar el canal de atención, las finalidades y los procedimientos antes de usarlo en producción.</p><button type="button" class="boton-arco-secundario enlace-regresar" (click)="regresarPantallaAnterior()">Regresar a la pantalla anterior</button></section>
+  <footer class="pie-legal"><span class="pie-marca">RecetON · Privacidad con claridad</span><button type="button" class="enlace-selector" (click)="regresarPantallaAnterior()">Regresar a la pantalla anterior</button></footer>
+</main>

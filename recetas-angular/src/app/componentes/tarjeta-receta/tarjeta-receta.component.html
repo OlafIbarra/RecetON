@@ -1,0 +1,13 @@
+<a class="tarjeta-receta" [routerLink]="['/receta', receta.id]">
+  <div class="tarjeta-media">
+    <span class="tarjeta-etiqueta" *ngIf="receta.etiqueta" [ngClass]="receta.colorEtiqueta">
+      {{ receta.etiqueta }}
+    </span>
+    <img [src]="receta.imagen" [alt]="receta.nombre">
+  </div>
+  <div class="tarjeta-cuerpo">
+    <div class="tarjeta-nombre">{{ receta.nombre }}</div>
+    <div class="tarjeta-meta">★ {{ receta.calificacion }} · {{ receta.tiempo }}</div>
+    <div class="tarjeta-precio">{{ receta.precio }}</div>
+  </div>
+</a>

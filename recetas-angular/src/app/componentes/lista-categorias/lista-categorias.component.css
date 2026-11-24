@@ -1,0 +1,10 @@
+:host{display:block}
+.categoria-item{border:0;background:transparent;cursor:pointer;padding:4px;appearance:none;color:inherit}
+.categoria-item:focus-visible{outline:2px solid var(--calabaza-os);outline-offset:3px;border-radius:12px}
+.categoria-item .categoria-foto{display:block;transition:box-shadow .15s,transform .15s}
+.categoria-item:hover .categoria-foto{transform:translateY(-2px)}
+.categoria-item.seleccionada .categoria-foto{box-shadow:0 0 0 3px var(--calabaza-os)}
+.categoria-item.seleccionada .categoria-nombre{color:var(--calabaza-os);font-weight:800}
+.lista-categorias.grande .categoria-item{width:88px}
+.lista-categorias.grande .categoria-foto{width:72px;height:72px}
+.lista-categorias.grande .categoria-nombre{font-size:13px}

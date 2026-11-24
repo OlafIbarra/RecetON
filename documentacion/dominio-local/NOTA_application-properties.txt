@@ -1,0 +1,6 @@
+No reemplazar application.properties. Verifica que conserve estas propiedades (además de las ya existentes de PostgreSQL):
+
+server.port=8080
+server.address=0.0.0.0
+
+Si server.address no está presente, añádelo. No incluyas la contraseña de PostgreSQL en este documento.

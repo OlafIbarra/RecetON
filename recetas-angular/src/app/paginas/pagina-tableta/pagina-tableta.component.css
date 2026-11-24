@@ -1,0 +1,14 @@
+ :host{display:block;min-height:100vh}
+.tableta{width:100%;max-width:none;min-height:100vh;margin:0;display:flex;flex-direction:column;background:transparent;box-shadow:none}
+.tableta-contenido{box-sizing:border-box;width:min(100%,1500px);flex:1;display:flex;flex-direction:column;gap:clamp(22px,3vw,36px);padding:clamp(18px,3.5vw,44px);margin:0 auto}
+.encabezado{display:grid;gap:14px 24px;align-items:center;grid-template-columns:minmax(0,1fr) minmax(250px,380px);grid-template-areas:"titulo buscador" "pestanas pestanas"}
+.titulo-pagina{grid-area:titulo;font-family:var(--tipo-serif);font-weight:600;font-size:clamp(1.8rem,3vw,3rem);letter-spacing:-.04em;line-height:1.05;color:var(--bosque)}
+.buscador{grid-area:buscador;min-width:0}.pestanas{grid-area:pestanas}
+.encabezado-seccion{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.ver-mas{font-size:.84rem;font-weight:800;color:var(--bosque)}
+.pie-legal{width:min(100%,1500px);box-sizing:border-box;margin:30px auto 0;padding-left:clamp(18px,3.5vw,44px);padding-right:clamp(18px,3.5vw,44px)}
+@media(max-width:820px){.tableta-contenido{padding:20px 16px}.encabezado{grid-template-columns:minmax(0,1fr);grid-template-areas:"titulo" "buscador" "pestanas"}.buscador{width:100%}}
+@media(max-width:480px){.tableta-contenido{padding:16px 12px}.titulo-pagina{font-size:1.8rem}}
+
+/* Separación del módulo de recetas externas */
+.seccion-descubre-recetas{margin-block:clamp(18px,3vw,32px);min-width:0;}

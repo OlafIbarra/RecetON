@@ -1,0 +1,7 @@
+<a class="tarjeta-reloj" [routerLink]="['/receta', receta.id]" [attr.aria-label]="'Ver detalle de ' + receta.nombre">
+  <span class="insignia">Receta de hoy</span>
+  <div class="foto"><img [src]="receta.imagen" [alt]="receta.nombre"></div>
+  <div class="nombre">{{ receta.nombre }}</div>
+  <div class="tiempo">⏱ {{ receta.tiempo }}</div>
+  <span class="enlace-detalle">Ver receta ›</span>
+</a>

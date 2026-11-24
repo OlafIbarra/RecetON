@@ -1,0 +1,21 @@
+<main class="admin-pedidos-pagina">
+  <header class="admin-pedidos-cabecera"><a routerLink="/administracion" class="volver">← Volver a administración</a><span class="marca">RecetON · ADMIN</span><h1>Gestión de pedidos</h1><p>Consulta las compras registradas y actualiza sus estados siguiendo el flujo de preparación y entrega.</p></header>
+  <p *ngIf="mensaje" class="aviso aviso-ok" role="status">{{ mensaje }}</p><p *ngIf="error" class="aviso aviso-error" role="alert">{{ error }}</p>
+  <div *ngIf="cargando" class="estado">Cargando pedidos…</div>
+  <section *ngIf="!cargando && !pedidos.length" class="vacio"><h2>Todavía no hay pedidos</h2><p>Los pedidos confirmados por los usuarios aparecerán aquí.</p></section>
+  <section class="admin-pedidos-layout" *ngIf="!cargando && pedidos.length">
+    <div class="admin-pedidos-lista">
+      <article class="pedido-admin" *ngFor="let pedido of pedidos">
+        <div class="pedido-admin-cabecera"><div><span class="id-pedido">PEDIDO #{{ pedido.idPedido }}</span><h2>{{ pedido.usuario }}</h2><small>{{ pedido.fechaPedido | date:'d MMM y, HH:mm' }}</small></div><strong class="pedido-precio">{{ formatoPrecio(pedido.total) }}</strong></div>
+        <div class="pedido-admin-datos"><span>{{ pedido.cantidadArticulos }} artículo(s)</span><span class="estado-pill" [class.cancelado]="pedido.estado === 'Cancelado'">{{ pedido.estado }}</span></div>
+        <div class="pedido-admin-acciones">
+          <button type="button" class="boton-secundario" (click)="verDetalle(pedido)">{{ detalle?.idPedido === pedido.idPedido ? 'Ocultar detalle' : 'Ver detalle' }}</button>
+          <label *ngIf="opcionesEstado(pedido.estado).length">Estado<select [name]="'estadoPedido' + pedido.idPedido" [(ngModel)]="estadosSeleccionados[pedido.idPedido]"><option [ngValue]="pedido.estado">{{ pedido.estado }}</option><option *ngFor="let estado of opcionesEstado(pedido.estado)" [ngValue]="estado">{{ estado }}</option></select></label>
+          <button *ngIf="opcionesEstado(pedido.estado).length" type="button" class="boton-principal" [disabled]="guardandoId !== null || estadosSeleccionados[pedido.idPedido] === pedido.estado" (click)="actualizarEstado(pedido)">{{ guardandoId === pedido.idPedido ? 'Guardando…' : 'Actualizar estado' }}</button>
+        </div>
+      </article>
+    </div>
+    <aside class="pedido-admin-detalle" *ngIf="detalle"><span class="id-pedido">RESUMEN DEL PEDIDO #{{ detalle.idPedido }}</span><h2>Datos de entrega</h2><p><strong>{{ detalle.usuario }}</strong></p><p>{{ detalle.direccionEnvio.calle }} {{ detalle.direccionEnvio.numero }}, {{ detalle.direccionEnvio.colonia }}</p><p>{{ detalle.direccionEnvio.ciudad }}, {{ detalle.direccionEnvio.estado }} · C. P. {{ detalle.direccionEnvio.codigoPostal }}</p><h3>Método registrado</h3><p>{{ detalle.metodoPago.tipo }}<span *ngIf="detalle.metodoPago.ultimos4Digitos"> · termina en {{ detalle.metodoPago.ultimos4Digitos }}</span></p><h3>Artículos</h3><div class="detalle-item" *ngFor="let item of detalle.items"><div><strong>{{ item.nombreProducto || 'Producto retirado del catálogo' }}</strong><small>{{ item.cantidad }} × {{ formatoPrecio(item.precioUnitario) }}</small></div><b>{{ formatoPrecio(item.subtotal) }}</b></div><div class="detalle-total"><span>Total registrado</span><strong>{{ formatoPrecio(detalle.total) }}</strong></div><p class="nota-demo">El sistema registra pedidos de demostración y no procesa cobros reales.</p></aside>
+  </section>
+  <footer class="pie-legal"><a routerLink="/privacidad">Aviso de privacidad y Derechos ARCO</a><a routerLink="/administracion">Panel de administración</a></footer>
+</main>

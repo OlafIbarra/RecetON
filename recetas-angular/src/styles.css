@@ -1,0 +1,254 @@
+/* =========================================================
+   RECETON — sistema visual global
+
+   Hay 4 páginas, una por pantalla del Figma (reloj, teléfono,
+   tableta y TV) más un índice para elegir. Este archivo tiene solo
+   lo compartido por todas: colores, tipografía, iconos, botones,
+   tarjetas. El diseño de cada pantalla vive en su propia carpeta
+   dentro de src/app/paginas/.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
+
+:root{
+  --crema:      #F3F7F1;
+  --papel:      #FFFFFF;
+  --tinta:      #183127;
+  --tinta-suave:#65766D;
+  --calabaza:   #F07845;
+  --calabaza-os:#C95228;
+  --calabaza-cl:#FFE5D8;
+  --ciruela:    #69374D;
+  --ciruela-cl: #F5E6EB;
+  --salvia:     #327B56;
+  --linea:      #DCE7DD;
+  --sombra:     rgba(13,47,33,.16);
+
+  --tipo-serif: 'Fraunces', Georgia, serif;
+  --tipo-sans:  'DM Sans', system-ui, sans-serif;
+  --bosque: #123D2C;
+  --bosque-profundo: #08271E;
+  --menta: #D8F2A5;
+  --turquesa: #52B89A;
+  --marfil: #FAFCF7;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html, body{ height:100%; }
+
+body{
+  font-family:var(--tipo-sans);
+  color:var(--tinta);
+  background:
+    radial-gradient(circle at 4% 0%, rgba(216,242,165,.24) 0%, transparent 34%),
+    radial-gradient(circle at 100% 22%, rgba(82,184,154,.12) 0%, transparent 30%),
+    #F3F7F1;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img{ display:block; max-width:100%; width:100%; height:100%; object-fit:cover; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; cursor:pointer; }
+
+/* ---------- tipografía ---------- */
+.marca{ font-family:var(--tipo-serif); font-weight:700; letter-spacing:.01em; }
+.texto-tenue{ color:var(--tinta-suave); }
+.titulo-seccion{ font-family:var(--tipo-serif); font-weight:600; color:var(--tinta); }
+
+/* ---------- iconos: el tamaño se ajusta con --tam-icono ---------- */
+.icono{ width:var(--tam-icono, 18px); height:var(--tam-icono, 18px); flex:0 0 auto; display:inline-flex; }
+.icono svg{ width:100%; height:100%; display:block; }
+.icono path, .icono circle, .icono line, .icono polyline, .icono polygon, .icono rect{
+  fill:none; stroke:currentColor; stroke-width:1.6;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+
+/* ---------- campo de búsqueda (app-barra-busqueda) ---------- */
+.campo-busqueda{
+  --tam-icono:16px;
+  display:flex; align-items:center; gap:8px;
+  background:var(--papel);
+  border:1px solid var(--linea);
+  border-radius:999px;
+  padding:10px 16px;
+  color:var(--tinta-suave);
+  font-size:14px;
+  width:100%;
+}
+.campo-busqueda input{
+  border:none; outline:none; background:transparent;
+  font-family:inherit; font-size:14px; color:var(--tinta); width:100%;
+}
+
+/* ---------- pestañas tipo "pill" (app-pestanas-navegacion) ---------- */
+.fila-pestanas{ display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+.fila-pestanas::-webkit-scrollbar{ display:none; }
+.fila-pestanas .pestana{
+  --tam-icono:14px;
+  display:flex; align-items:center; gap:6px;
+  padding:7px 13px;
+  border-radius:999px;
+  border:1px solid var(--linea);
+  background:var(--papel);
+  font-size:12.5px; font-weight:500;
+  color:var(--tinta-suave);
+  white-space:nowrap;
+}
+.fila-pestanas .pestana.activa{ background:var(--tinta); border-color:var(--tinta); color:var(--crema); }
+
+/* ---------- banner (app-banner-principal) ---------- */
+.banner{
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  color:#fff;
+  background:#8a7a63;
+  width:100%;
+}
+.banner::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(100deg, rgba(20,14,8,.8) 15%, rgba(20,14,8,.35) 60%, rgba(20,14,8,.05) 90%);
+}
+.banner-imagen{ position:absolute; inset:0; }
+.banner-contenido{ position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; height:100%; }
+.banner-insignia{
+  align-self:flex-start;
+  background:var(--calabaza); color:#fff;
+  font-size:11px; font-weight:600; letter-spacing:.03em;
+  padding:5px 11px; border-radius:999px; margin-bottom:12px;
+}
+.banner-titulo{ font-family:var(--tipo-serif); font-weight:600; line-height:1.15; }
+.banner-subtitulo{ color:#EFE7D8; font-weight:400; margin-top:10px; }
+
+/* ---------- categorías (app-lista-categorias) ---------- */
+.lista-categorias{
+  display:flex; gap:clamp(14px, 2.5vw, 32px);
+  overflow-x:auto; scrollbar-width:none;
+  padding-bottom:2px;
+}
+.lista-categorias::-webkit-scrollbar{ display:none; }
+.categoria-item{
+  flex:0 0 auto; width:58px;
+  display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center;
+}
+.categoria-foto{
+  width:54px; height:54px;
+  border-radius:50%; overflow:hidden;
+  border:1px solid var(--linea); background:var(--calabaza-cl);
+}
+.categoria-nombre{ font-size:12px; font-weight:500; color:var(--tinta); }
+
+
+/* ---------- recetas: cuadrícula y tarjetas ---------- */
+.cuadricula-recetas{ display:grid; gap:12px; }
+
+.tarjeta-receta{
+  background:var(--papel); border:1px solid var(--linea); border-radius:14px;
+  overflow:hidden; display:flex; flex-direction:column; height:100%;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.tarjeta-receta:hover{ transform:translateY(-2px); box-shadow:0 12px 24px -12px var(--sombra); }
+.tarjeta-media{ position:relative; overflow:hidden; aspect-ratio:3/2; }
+.tarjeta-etiqueta{
+  position:absolute; top:9px; left:9px;
+  font-size:10px; font-weight:600; letter-spacing:.02em;
+  color:#fff; padding:4px 9px; border-radius:999px;
+}
+.tarjeta-etiqueta.squash{ background:var(--calabaza); }
+.tarjeta-etiqueta.sage{ background:var(--salvia); }
+.tarjeta-etiqueta.plum{ background:var(--ciruela); }
+.tarjeta-cuerpo{ padding:10px 12px 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
+.tarjeta-nombre{ font-size:13px; font-weight:600; line-height:1.3; }
+.tarjeta-meta{ font-size:11.5px; color:var(--tinta-suave); }
+.tarjeta-precio{ margin-top:auto; font-family:var(--tipo-serif); font-weight:600; color:var(--calabaza-os); font-size:14px; padding-top:4px; }
+
+/* ---------- botones ---------- */
+.boton-primario{
+  background:var(--calabaza); color:#fff; border:none;
+  border-radius:12px; padding:12px 20px;
+  font-size:14px; font-weight:600;
+}
+.boton-primario:disabled{ opacity:.6; cursor:not-allowed; }
+.boton-primario:not(:disabled):hover{ background:var(--calabaza-os); }
+
+.boton-salir{
+  display:flex; align-items:center; gap:6px;
+  background:var(--ciruela-cl); color:var(--ciruela);
+  border:none; border-radius:999px;
+  padding:8px 14px; font-size:12.5px; font-weight:600;
+}
+.boton-salir:hover{ filter:brightness(0.95); }
+
+.enlace-volver{ display:inline-flex; align-items:center; gap:6px; color:var(--tinta-suave); font-size:13px; margin-bottom:16px; }
+
+/* ---------- mensajes de estado ---------- */
+.mensaje-error{
+  background:var(--ciruela-cl); color:var(--ciruela);
+  border-radius:10px; padding:10px 14px; font-size:13px;
+}
+.mensaje-cargando{ color:var(--tinta-suave); font-size:14px; padding:24px 0; text-align:center; }
+
+.aviso-respaldo{
+  color:var(--calabaza-os); font-size:12.5px; font-weight:600;
+  background:var(--calabaza-cl); display:inline-block;
+  padding:5px 12px; border-radius:999px; margin-bottom:12px;
+}
+
+/* Interacciones funcionales */
+.boton-enlace{border:0;background:transparent;padding:0;font:inherit;cursor:pointer}
+.boton-enlace:hover{text-decoration:underline}.categoria-item:focus-visible{outline:2px solid var(--calabaza-os);outline-offset:3px}
+
+
+/* ===== Sistema visual renovado: cocina contemporánea + tecnología ===== */
+::selection{background:var(--menta);color:var(--bosque-profundo)}
+button,a,input,textarea,select{ -webkit-tap-highlight-color:transparent; }
+button,a{transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(82,184,154,.75);outline-offset:3px}
+input,textarea,select{max-width:100%}
+button:disabled{cursor:not-allowed;opacity:.58}
+
+.pie-legal{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:clamp(26px,4vw,48px);padding:18px 0 8px;border-top:1px solid var(--linea);color:var(--tinta-suave);font-size:.82rem}
+.pie-legal a{display:inline-flex;align-items:center;gap:7px;color:var(--bosque);font-weight:800;text-decoration:none;border-bottom:1px solid transparent}
+.pie-legal a:hover{color:var(--calabaza-os);border-color:currentColor}
+.pie-legal .pie-marca{font-weight:700;letter-spacing:.04em}
+.marca{letter-spacing:.12em;text-transform:uppercase}
+.titulo-seccion{letter-spacing:-.025em}
+
+/* Elementos compartidos */
+.campo-busqueda{background:rgba(255,255,255,.92);border:1px solid #d5e4d8;box-shadow:0 6px 20px rgba(13,47,33,.05);backdrop-filter:blur(14px);min-height:48px}
+.campo-busqueda:focus-within{border-color:var(--turquesa);box-shadow:0 0 0 4px rgba(82,184,154,.13)}
+.fila-pestanas .pestana{padding:9px 15px;font-weight:700;border-color:#d9e6db;background:#fff;box-shadow:0 4px 14px rgba(13,47,33,.035)}
+.fila-pestanas .pestana.activa{background:var(--bosque);border-color:var(--bosque);color:#fff}
+.banner{border-radius:26px;box-shadow:0 18px 45px rgba(11,46,31,.15)}
+.banner::after{background:linear-gradient(100deg,rgba(5,32,22,.88) 8%,rgba(5,32,22,.54) 55%,rgba(5,32,22,.05) 100%)}
+.banner-insignia{background:var(--menta);color:var(--bosque-profundo);font-weight:800}
+.tarjeta-receta{border-radius:20px;border-color:#e1eae0;box-shadow:0 10px 25px rgba(13,47,33,.055)}
+.tarjeta-receta:hover{transform:translateY(-5px);box-shadow:0 22px 38px rgba(13,47,33,.13)}
+.tarjeta-media{aspect-ratio:4/3;background:#e5efe4}
+.tarjeta-cuerpo{padding:15px 16px 17px;gap:7px}
+.tarjeta-nombre{font-size:clamp(14px,1vw,17px);letter-spacing:-.02em}
+.tarjeta-meta{font-size:12px}
+.tarjeta-precio{color:var(--bosque);font-family:var(--tipo-sans);font-size:1.05rem;font-weight:800}
+.tarjeta-etiqueta{box-shadow:0 4px 12px rgba(0,0,0,.16)}
+.boton-primario{background:linear-gradient(135deg,var(--bosque),#246847);border-radius:13px;box-shadow:0 8px 18px rgba(18,61,44,.16);font-weight:800}
+.boton-primario:hover:not(:disabled){background:linear-gradient(135deg,#0b2c20,#1c583a);transform:translateY(-1px);box-shadow:0 12px 24px rgba(18,61,44,.2)}
+.boton-salir{background:#f8e8e8;color:#8e3543}
+.lista-categorias{gap:clamp(12px,2vw,26px);padding:8px 4px 12px}
+.categoria-foto{box-shadow:0 8px 20px rgba(13,47,33,.09);border:3px solid white;outline:1px solid #dce7dd}
+.categoria-nombre{font-weight:700}
+.categoria-item.seleccionada .categoria-foto{box-shadow:0 0 0 3px var(--turquesa),0 9px 18px rgba(13,47,33,.1)}
+.lista-categorias .categoria-item.seleccionada .categoria-nombre{color:var(--bosque)}
+.aviso-respaldo{background:#fff2dc;color:#96501e;border:1px solid #f4d5a7}
+.mensaje-error{background:#fff0ee;border:1px solid #f2ccc5;color:#8f3025}
+.mensaje-cargando{padding:28px;text-align:center}
+
+/* La grilla decide sus columnas según el ancho real, no por la ruta visitada. */
+app-cuadricula-recetas{display:block;min-width:0}
+app-cuadricula-recetas .cuadricula-recetas{grid-template-columns:repeat(auto-fit,minmax(min(100%,225px),1fr))!important;gap:clamp(13px,1.7vw,22px)}
+@media(max-width:760px){app-cuadricula-recetas .cuadricula-recetas{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))!important}}
+@media(max-width:420px){app-cuadricula-recetas .cuadricula-recetas{grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr))!important;gap:10px}}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

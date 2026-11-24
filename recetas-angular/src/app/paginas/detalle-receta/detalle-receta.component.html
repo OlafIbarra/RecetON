@@ -1,0 +1,351 @@
+<main class="detalle">
+  <button class="enlace-volver" type="button" (click)="volver()">← Volver</button>
+
+  <p class="mensaje-cargando" *ngIf="cargando" role="status">Cargando detalle de la receta…</p>
+  <p class="mensaje-error" *ngIf="mensajeError" role="alert">{{ mensajeError }}</p>
+
+  <ng-container *ngIf="detalle as d">
+    <p class="mensaje-accion" *ngIf="mensajeAccion" role="status">{{ mensajeAccion }}</p>
+    <p class="mensaje-error" *ngIf="errorAccion" role="alert">{{ errorAccion }}</p>
+
+    <article class="tarjeta-detalle">
+      <div class="detalle-imagen">
+        <img *ngIf="imagenPrincipal; else sinImagen" [src]="imagenPrincipal" [alt]="d.receta.nombre" />
+        <ng-template #sinImagen>
+          <div class="imagen-no-disponible">Imagen no disponible</div>
+        </ng-template>
+      </div>
+
+      <div class="detalle-info">
+        <span class="tarjeta-etiqueta" *ngIf="d.categorias.length">
+          {{ d.categorias.join(' · ') }}
+        </span>
+        <h1>{{ d.receta.nombre }}</h1>
+        <p class="descripcion">
+          {{ d.receta.descripcion || 'Esta receta todavía no tiene una descripción registrada.' }}
+        </p>
+
+        <div class="detalle-meta">
+          <span>★ {{ d.receta.calificacion | number:'1.1-1' }} <small>({{ d.valoraciones.length }} valoraciones)</small></span>
+          <span *ngIf="d.receta.tiempo">⏱ {{ d.receta.tiempo }}</span>
+          <span *ngIf="d.receta.porciones">{{ d.receta.porciones }} porciones</span>
+          <span *ngIf="d.receta.dificultad">Dificultad: {{ d.receta.dificultad }}</span>
+          <span *ngIf="d.paisOrigen">Origen: {{ d.paisOrigen }}</span>
+        </div>
+        <p class="detalle-precio">${{ d.receta.precio }}</p>
+        <div class="acciones-fila acciones-cabecera-detalle">
+          <button class="boton-accion favorito" type="button" (click)="alternarFavorito()"
+                  [disabled]="guardandoFavorito || cargandoFavorito || !usuarioActual">
+            {{ cargandoFavorito ? 'Comprobando favorito…' : guardandoFavorito ? 'Guardando…' : esFavorita ? '♥ Quitar de favoritos' : '♡ Agregar a favoritos' }}
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <section class="seccion-detalle seccion-imagenes">
+      <div class="encabezado-seccion">
+        <h2>Galería de fotos</h2>
+        <button *ngIf="esAdministrador" class="boton-accion" type="button" (click)="mostrarAgregarImagen()">
+          {{ mostrarFormularioImagen ? 'Cancelar' : '+ Añadir foto' }}
+        </button>
+      </div>
+      <form class="formulario-contenido" *ngIf="mostrarFormularioImagen && esAdministrador" (ngSubmit)="guardarImagen()">
+        <div class="campo-formulario campo-ancho-completo">
+          <label for="urlImagenNueva">Enlace de la foto *</label>
+          <input id="urlImagenNueva" name="urlImagenNueva" type="url"
+                 [(ngModel)]="nuevaImagen.urlImagen" required maxlength="255"
+                 placeholder="https://ejemplo.com/receta.jpg" />
+        </div>
+        <label class="opcion-checkbox">
+          <input type="checkbox" name="imagenNuevaPortada" [(ngModel)]="nuevaImagen.esPortada" />
+          Establecer como foto principal
+        </label>
+        <p class="ayuda-formulario">Pega un enlace directo a una imagen pública. La foto principal será la que aparezca primero al consultar la receta.</p>
+        <div class="acciones-formulario">
+          <button class="boton-accion principal" type="submit" [disabled]="guardandoImagen">{{ guardandoImagen ? 'Guardando…' : 'Guardar imagen' }}</button>
+          <button class="boton-secundario" type="button" (click)="mostrarAgregarImagen()" [disabled]="guardandoImagen">Cancelar</button>
+        </div>
+      </form>
+      <p class="sin-datos" *ngIf="!imagenesAdministrables.length">Pronto podrás ver más fotos de esta preparación.</p>
+      <ul class="lista-imagenes-administracion" *ngIf="imagenesAdministrables.length">
+        <li *ngFor="let imagen of imagenesAdministrables">
+          <img [src]="imagen.urlImagen" [alt]="'Imagen de ' + d.receta.nombre" loading="lazy" />
+          <div class="datos-imagen-administracion">
+            <strong *ngIf="imagen.esPortada && esAdministrador" class="insignia-portada">Foto principal</strong>
+            <div class="acciones-fila" *ngIf="esAdministrador">
+              <button *ngIf="!imagen.esPortada" class="boton-texto" type="button"
+                      (click)="establecerComoPortada(imagen)" [disabled]="guardandoImagen">Establecer como portada</button>
+              <button class="boton-texto peligro" type="button"
+                      (click)="eliminarImagen(imagen)" [disabled]="guardandoImagen">Eliminar imagen</button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="seccion-detalle">
+      <div class="encabezado-seccion">
+        <h2>Ingredientes</h2>
+        <button *ngIf="esAdministrador" class="boton-accion" type="button" (click)="mostrarAgregarIngrediente()">
+          {{ mostrarFormularioIngrediente ? 'Cancelar' : '+ Agregar ingrediente' }}
+        </button>
+      </div>
+
+      <form class="formulario-contenido" *ngIf="mostrarFormularioIngrediente && esAdministrador" (ngSubmit)="guardarIngrediente()">
+        <div class="campo-formulario campo-ancho-completo">
+          <label for="nombreIngredienteNuevo">Nombre del ingrediente *</label>
+          <input id="nombreIngredienteNuevo" name="nombreIngredienteNuevo" type="text"
+                 [(ngModel)]="nuevoIngrediente.nombreIngrediente" required maxlength="255"
+                 placeholder="Ej. Lechuga" />
+        </div>
+        <div class="campos-en-linea">
+          <div class="campo-formulario">
+            <label for="cantidadIngredienteNueva">Cantidad</label>
+            <input id="cantidadIngredienteNueva" name="cantidadIngredienteNueva" type="number"
+                   min="0" step="0.01" [(ngModel)]="nuevoIngrediente.cantidad" placeholder="Al gusto" />
+          </div>
+          <div class="campo-formulario">
+            <label for="unidadIngredienteNueva">Unidad</label>
+            <input id="unidadIngredienteNueva" name="unidadIngredienteNueva" type="text"
+                   [(ngModel)]="nuevoIngrediente.nombreUnidad" maxlength="255" placeholder="Ej. gramos" />
+          </div>
+          <div class="campo-formulario">
+            <label for="abreviaturaIngredienteNueva">Abreviatura</label>
+            <input id="abreviaturaIngredienteNueva" name="abreviaturaIngredienteNueva" type="text"
+                   [(ngModel)]="nuevoIngrediente.abreviaturaUnidad" maxlength="255" placeholder="Ej. g" />
+          </div>
+        </div>
+        <p class="ayuda-formulario">Si el ingrediente o la unidad no existen, se registrarán en sus catálogos actuales.</p>
+        <div class="acciones-formulario">
+          <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">{{ guardandoContenido ? 'Guardando…' : 'Guardar ingrediente' }}</button>
+          <button class="boton-secundario" type="button" (click)="mostrarAgregarIngrediente()" [disabled]="guardandoContenido">Cancelar</button>
+        </div>
+      </form>
+
+      <p class="sin-datos" *ngIf="!d.ingredientes.length">Todavía no hay ingredientes registrados para esta receta.</p>
+      <ul class="lista-ingredientes" *ngIf="d.ingredientes.length">
+        <li *ngFor="let ingrediente of d.ingredientes">
+          <ng-container *ngIf="ingredienteEditandoId !== ingrediente.idIngrediente; else formularioEditarIngrediente">
+            <div class="dato-ingrediente">
+              <span class="nombre-ingrediente">{{ ingrediente.nombre }}</span>
+              <span class="cantidad-ingrediente">
+                {{ ingrediente.cantidad === null ? 'Al gusto' : (ingrediente.cantidad | number:'1.0-2') }}
+                {{ ingrediente.abreviatura || ingrediente.unidad || '' }}
+              </span>
+            </div>
+            <div class="acciones-fila" *ngIf="esAdministrador">
+              <button class="boton-texto" type="button" (click)="iniciarEdicionIngrediente(ingrediente)">Editar</button>
+              <button class="boton-texto peligro" type="button" (click)="eliminarIngrediente(ingrediente)" [disabled]="guardandoContenido">Quitar</button>
+            </div>
+          </ng-container>
+          <ng-template #formularioEditarIngrediente>
+            <form class="formulario-edicion" (ngSubmit)="guardarEdicionIngrediente(ingrediente)">
+              <strong>{{ ingrediente.nombre }}</strong>
+              <div class="campos-en-linea">
+                <div class="campo-formulario">
+                  <label [for]="'cantidad-editar-' + ingrediente.idIngrediente">Cantidad</label>
+                  <input [id]="'cantidad-editar-' + ingrediente.idIngrediente" name="cantidadEditar" type="number" min="0" step="0.01" [(ngModel)]="ingredienteEnEdicion.cantidad" />
+                </div>
+                <div class="campo-formulario">
+                  <label [for]="'unidad-editar-' + ingrediente.idIngrediente">Unidad</label>
+                  <input [id]="'unidad-editar-' + ingrediente.idIngrediente" name="unidadEditar" type="text" [(ngModel)]="ingredienteEnEdicion.nombreUnidad" />
+                </div>
+                <div class="campo-formulario">
+                  <label [for]="'abreviatura-editar-' + ingrediente.idIngrediente">Abreviatura</label>
+                  <input [id]="'abreviatura-editar-' + ingrediente.idIngrediente" name="abreviaturaEditar" type="text" [(ngModel)]="ingredienteEnEdicion.abreviaturaUnidad" />
+                </div>
+              </div>
+              <div class="acciones-formulario">
+                <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">Guardar</button>
+                <button class="boton-secundario" type="button" (click)="cancelarEdicionIngrediente()">Cancelar</button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+      </ul>
+    </section>
+
+    <section class="seccion-detalle">
+      <div class="encabezado-seccion">
+        <h2>Preparación</h2>
+        <button *ngIf="esAdministrador" class="boton-accion" type="button" (click)="mostrarAgregarPaso()">
+          {{ mostrarFormularioPaso ? 'Cancelar' : '+ Agregar paso' }}
+        </button>
+      </div>
+
+      <form class="formulario-contenido" *ngIf="mostrarFormularioPaso && esAdministrador" (ngSubmit)="guardarPaso()">
+        <div class="campos-en-linea">
+          <div class="campo-formulario">
+            <label for="numeroPasoNuevo">Número de paso</label>
+            <input id="numeroPasoNuevo" name="numeroPasoNuevo" type="number" min="1"
+                   [(ngModel)]="nuevoPaso.numeroPaso" [placeholder]="'Automático: ' + siguienteNumeroPaso" />
+          </div>
+          <div class="campo-formulario">
+            <label for="tiempoPasoNuevo">Tiempo estimado (min)</label>
+            <input id="tiempoPasoNuevo" name="tiempoPasoNuevo" type="number" min="0"
+                   [(ngModel)]="nuevoPaso.tiempoEstimadoMin" placeholder="Opcional" />
+          </div>
+        </div>
+        <div class="campo-formulario campo-ancho-completo">
+          <label for="descripcionPasoNueva">Instrucción *</label>
+          <textarea id="descripcionPasoNueva" name="descripcionPasoNueva" [(ngModel)]="nuevoPaso.descripcion"
+                    required rows="3" maxlength="5000" placeholder="Describe qué debe hacerse en este paso"></textarea>
+        </div>
+        <div class="acciones-formulario">
+          <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">{{ guardandoContenido ? 'Guardando…' : 'Guardar paso' }}</button>
+          <button class="boton-secundario" type="button" (click)="mostrarAgregarPaso()" [disabled]="guardandoContenido">Cancelar</button>
+        </div>
+      </form>
+
+      <p class="sin-datos" *ngIf="!d.pasos.length">Todavía no hay pasos de preparación registrados para esta receta.</p>
+      <ol class="lista-pasos" *ngIf="d.pasos.length">
+        <li *ngFor="let paso of d.pasos; let indice = index">
+          <ng-container *ngIf="pasoEditandoId !== paso.idPaso; else formularioEditarPaso">
+            <div class="paso-cabecera">
+              <strong>Paso {{ paso.numeroPaso || indice + 1 }}</strong>
+              <span *ngIf="paso.tiempoEstimadoMin">{{ paso.tiempoEstimadoMin }} min</span>
+            </div>
+            <p>{{ paso.descripcion }}</p>
+            <div class="acciones-fila" *ngIf="esAdministrador">
+              <button class="boton-texto" type="button" (click)="iniciarEdicionPaso(paso, indice)">Editar</button>
+              <button class="boton-texto peligro" type="button" (click)="eliminarPaso(paso)" [disabled]="guardandoContenido">Eliminar</button>
+            </div>
+          </ng-container>
+          <ng-template #formularioEditarPaso>
+            <form class="formulario-edicion" (ngSubmit)="guardarEdicionPaso(paso)">
+              <div class="campos-en-linea">
+                <div class="campo-formulario">
+                  <label [for]="'numero-paso-editar-' + paso.idPaso">Número</label>
+                  <input [id]="'numero-paso-editar-' + paso.idPaso" name="numeroPasoEditar" type="number" min="1" [(ngModel)]="pasoEnEdicion.numeroPaso" />
+                </div>
+                <div class="campo-formulario">
+                  <label [for]="'tiempo-paso-editar-' + paso.idPaso">Tiempo (min)</label>
+                  <input [id]="'tiempo-paso-editar-' + paso.idPaso" name="tiempoPasoEditar" type="number" min="0" [(ngModel)]="pasoEnEdicion.tiempoEstimadoMin" />
+                </div>
+              </div>
+              <div class="campo-formulario">
+                <label [for]="'descripcion-paso-editar-' + paso.idPaso">Instrucción</label>
+                <textarea [id]="'descripcion-paso-editar-' + paso.idPaso" name="descripcionPasoEditar" [(ngModel)]="pasoEnEdicion.descripcion" required rows="3"></textarea>
+              </div>
+              <div class="acciones-formulario">
+                <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">Guardar cambios</button>
+                <button class="boton-secundario" type="button" (click)="cancelarEdicionPaso()">Cancelar</button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+      </ol>
+    </section>
+
+    <section class="seccion-detalle">
+      <div class="encabezado-seccion">
+        <h2>Equipo de cocina</h2>
+        <button *ngIf="esAdministrador" class="boton-accion" type="button" (click)="mostrarAgregarEquipo()">
+          {{ mostrarFormularioEquipo ? 'Cancelar' : '+ Agregar equipo' }}
+        </button>
+      </div>
+      <form class="formulario-contenido" *ngIf="mostrarFormularioEquipo && esAdministrador" (ngSubmit)="guardarEquipo()">
+        <div class="campo-formulario campo-ancho-completo">
+          <label for="nombreEquipoNuevo">Nombre del equipo *</label>
+          <input id="nombreEquipoNuevo" name="nombreEquipoNuevo" type="text"
+                 [(ngModel)]="nuevoEquipo" required maxlength="255"
+                 placeholder="Ej. Sartén, horno, licuadora" />
+        </div>
+        <p class="ayuda-formulario">Se reutilizará el equipo del catálogo si ya existe; de lo contrario, se registrará.</p>
+        <div class="acciones-formulario">
+          <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">Guardar equipo</button>
+          <button class="boton-secundario" type="button" (click)="mostrarAgregarEquipo()" [disabled]="guardandoContenido">Cancelar</button>
+        </div>
+      </form>
+      <p class="sin-datos" *ngIf="!d.equipos.length">Todavía no hay equipos asociados a esta receta.</p>
+      <ul class="lista-etiquetas" *ngIf="d.equipos.length">
+        <li *ngFor="let equipo of d.equipos">
+          <span>{{ equipo.nombre }}</span>
+          <button *ngIf="esAdministrador" class="boton-texto peligro" type="button" (click)="eliminarEquipo(equipo)" [disabled]="guardandoContenido">Quitar</button>
+        </li>
+      </ul>
+    </section>
+
+    <section class="seccion-detalle">
+      <div class="encabezado-seccion">
+        <h2>Información nutricional</h2>
+        <div class="acciones-fila">
+          <button *ngIf="esAdministrador" class="boton-accion" type="button" (click)="iniciarEdicionNutricion()">
+            {{ d.informacionNutricional ? 'Editar información' : '+ Agregar información' }}
+          </button>
+          <button *ngIf="esAdministrador && d.informacionNutricional" class="boton-texto peligro" type="button"
+                  (click)="eliminarNutricion()" [disabled]="guardandoContenido">Eliminar</button>
+        </div>
+      </div>
+      <form class="formulario-contenido" *ngIf="mostrarFormularioNutricion && esAdministrador" (ngSubmit)="guardarNutricion()">
+        <p class="ayuda-formulario">Todos los campos son opcionales, pero debes proporcionar al menos uno. Usa valores no negativos.</p>
+        <div class="campos-en-linea">
+          <div class="campo-formulario"><label for="nutricionCalorias">Calorías (kcal)</label><input id="nutricionCalorias" name="nutricionCalorias" type="number" min="0" step="0.01" [(ngModel)]="nutricionEnEdicion.calorias" /></div>
+          <div class="campo-formulario"><label for="nutricionProteinas">Proteínas (g)</label><input id="nutricionProteinas" name="nutricionProteinas" type="number" min="0" step="0.01" [(ngModel)]="nutricionEnEdicion.proteinasG" /></div>
+          <div class="campo-formulario"><label for="nutricionCarbohidratos">Carbohidratos (g)</label><input id="nutricionCarbohidratos" name="nutricionCarbohidratos" type="number" min="0" step="0.01" [(ngModel)]="nutricionEnEdicion.carbohidratosG" /></div>
+          <div class="campo-formulario"><label for="nutricionGrasas">Grasas (g)</label><input id="nutricionGrasas" name="nutricionGrasas" type="number" min="0" step="0.01" [(ngModel)]="nutricionEnEdicion.grasasG" /></div>
+          <div class="campo-formulario"><label for="nutricionAzucares">Azúcares (g)</label><input id="nutricionAzucares" name="nutricionAzucares" type="number" min="0" step="0.01" [(ngModel)]="nutricionEnEdicion.azucaresG" /></div>
+          <div class="campo-formulario"><label for="nutricionSodio">Sodio (mg)</label><input id="nutricionSodio" name="nutricionSodio" type="number" min="0" step="0.01" [(ngModel)]="nutricionEnEdicion.sodioMg" /></div>
+        </div>
+        <div class="acciones-formulario">
+          <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">Guardar información nutricional</button>
+          <button class="boton-secundario" type="button" (click)="cancelarEdicionNutricion()" [disabled]="guardandoContenido">Cancelar</button>
+        </div>
+      </form>
+      <p class="sin-datos" *ngIf="!d.informacionNutricional">Todavía no hay información nutricional registrada.</p>
+      <div class="tabla-contenedor" *ngIf="d.informacionNutricional as nutricion">
+        <table class="tabla-nutricion">
+          <tbody>
+            <tr><th>Calorías</th><td>{{ nutricion.calorias === null ? 'Sin dato' : (nutricion.calorias | number:'1.0-2') + ' kcal' }}</td></tr>
+            <tr><th>Proteínas</th><td>{{ nutricion.proteinasG === null ? 'Sin dato' : (nutricion.proteinasG | number:'1.0-2') + ' g' }}</td></tr>
+            <tr><th>Carbohidratos</th><td>{{ nutricion.carbohidratosG === null ? 'Sin dato' : (nutricion.carbohidratosG | number:'1.0-2') + ' g' }}</td></tr>
+            <tr><th>Grasas</th><td>{{ nutricion.grasasG === null ? 'Sin dato' : (nutricion.grasasG | number:'1.0-2') + ' g' }}</td></tr>
+            <tr><th>Azúcares</th><td>{{ nutricion.azucaresG === null ? 'Sin dato' : (nutricion.azucaresG | number:'1.0-2') + ' g' }}</td></tr>
+            <tr><th>Sodio</th><td>{{ nutricion.sodioMg === null ? 'Sin dato' : (nutricion.sodioMg | number:'1.0-2') + ' mg' }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="seccion-detalle">
+      <h2>Valoraciones y comentarios</h2>
+      <p class="sin-datos" *ngIf="!d.valoraciones.length">Esta receta todavía no tiene valoraciones.</p>
+      <div class="lista-valoraciones" *ngIf="d.valoraciones.length">
+        <article class="tarjeta-valoracion" *ngFor="let valoracion of d.valoraciones">
+          <div class="valoracion-cabecera">
+            <strong>{{ valoracion.usuario }}</strong>
+            <span>★ {{ valoracion.puntuacion ?? '—' }}/5</span>
+          </div>
+          <p *ngIf="valoracion.comentario">{{ valoracion.comentario }}</p>
+          <time *ngIf="valoracion.fecha" [attr.datetime]="valoracion.fecha">{{ valoracion.fecha | date:'mediumDate' }}</time>
+        </article>
+      </div>
+      <form class="formulario-contenido" *ngIf="usuarioActual as usuario" (ngSubmit)="guardarValoracion()">
+        <h3>Deja tu valoración</h3>
+        <p class="ayuda-formulario">Se registrará a nombre de {{ usuario.nombreUsuario }}.</p>
+        <div class="campos-en-linea">
+          <div class="campo-formulario">
+            <label for="puntuacionNueva">Puntuación *</label>
+            <select id="puntuacionNueva" name="puntuacionNueva" [(ngModel)]="nuevaValoracion.puntuacion" required>
+              <option [ngValue]="5">5 - Excelente</option>
+              <option [ngValue]="4">4 - Muy buena</option>
+              <option [ngValue]="3">3 - Buena</option>
+              <option [ngValue]="2">2 - Regular</option>
+              <option [ngValue]="1">1 - Mala</option>
+            </select>
+          </div>
+        </div>
+        <div class="campo-formulario campo-ancho-completo">
+          <label for="comentarioValoracion">Comentario</label>
+          <textarea id="comentarioValoracion" name="comentarioValoracion" [(ngModel)]="nuevaValoracion.comentario"
+                    maxlength="5000" rows="3" placeholder="Comparte tu opinión (opcional)"></textarea>
+        </div>
+        <div class="acciones-formulario">
+          <button class="boton-accion principal" type="submit" [disabled]="guardandoContenido">Enviar valoración</button>
+        </div>
+      </form>
+      <p class="ayuda-formulario" *ngIf="!usuarioActual">Inicia sesión para dejar una valoración.</p>
+    </section>
+  </ng-container>
+  <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

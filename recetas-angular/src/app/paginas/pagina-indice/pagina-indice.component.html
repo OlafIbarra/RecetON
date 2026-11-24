@@ -1,0 +1,28 @@
+<main class="indice">
+  <header class="indice-cabecera">
+    <div>
+      <img class="indice-logo" src="/assets/brand/receton-logo-transparente.png" alt="RecetON" width="250" height="50">
+      <h1>Elige una pantalla</h1>
+      <p class="texto-tenue">Hola, {{ nombreUsuario }}. Tu rol es {{ etiquetaRol }}. Elige la pantalla que prefieras.</p>
+    </div>
+    <div class="acciones-indice">
+      <button class="boton-favoritos" type="button" (click)="verFavoritos()">♡ Mis favoritos</button>
+      <button class="boton-tienda" type="button" (click)="verTienda()">Tienda</button>
+      <button class="boton-carrito" type="button" (click)="verCarrito()">Carrito</button>
+      <button class="boton-pedidos" type="button" (click)="verPedidos()">Mis pedidos</button>
+      <a class="boton-privacidad" href="/mi-cuenta">Mi cuenta</a>
+      <a class="boton-privacidad" href="/privacidad">Privacidad y ARCO</a>
+      <button *ngIf="esAdministrador" class="boton-tienda" type="button" (click)="verAdministracion()">Administración</button>
+      <button class="boton-salir" type="button" (click)="cerrarSesion()">
+        <app-icono nombre="salir"></app-icono>
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <section class="indice-opciones">
+    <app-tarjeta-pantalla *ngFor="let opcion of opciones" [opcion]="opcion"></app-tarjeta-pantalla>
+  </section>
+
+  <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

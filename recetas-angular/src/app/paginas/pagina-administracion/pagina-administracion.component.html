@@ -1,0 +1,73 @@
+<main class="administracion-pagina">
+  <header class="administracion-cabecera">
+    <button type="button" class="enlace-volver" (click)="regresarPantallaAnterior()">← Regresar a la pantalla anterior</button>
+    <div class="cabecera-titulo"><div><span class="marca">RecetON</span><h1>Administración</h1><p>Gestiona el contenido de la aplicación. Esta pantalla solo está disponible para administradores.</p></div>
+      <div class="acciones-admin-cabecera"><a routerLink="/administracion/pedidos" class="boton-secundario">Gestionar pedidos</a><a routerLink="/administracion/solicitudes-arco" class="boton-secundario">Solicitudes ARCO</a><a routerLink="/productos" class="boton-secundario">Administrar tienda</a></div>
+    </div>
+  </header>
+
+  <p *ngIf="mensaje" class="mensaje mensaje-ok" role="status">{{ mensaje }}</p>
+  <p *ngIf="error" class="mensaje mensaje-error" role="alert">{{ error }}</p>
+  <p *ngIf="cargando" class="estado">Cargando información…</p>
+
+  <nav class="pestanas-admin" aria-label="Secciones de administración">
+    <button type="button" [class.activa]="vista === 'recetas'" (click)="seleccionarVista('recetas')">Recetas ({{ recetas.length }})</button>
+    <button type="button" [class.activa]="vista === 'categorias'" (click)="seleccionarVista('categorias')">Categorías ({{ categorias.length }})</button>
+    <button type="button" [class.activa]="vista === 'usuarios'" (click)="seleccionarVista('usuarios')">Usuarios ({{ usuarios.length }})</button>
+  </nav>
+
+  <section *ngIf="!cargando && vista === 'recetas'" class="seccion-admin">
+    <h2>{{ recetaEditandoId === null ? 'Crear receta' : 'Editar receta' }}</h2>
+    <form class="formulario-admin" (ngSubmit)="guardarReceta()">
+      <label>Título *<input name="nombreReceta" [(ngModel)]="formularioReceta.name" required maxlength="255"></label>
+      <label>Enlace de foto (solo administración)<input name="imagenReceta" type="url" [(ngModel)]="formularioReceta.image" maxlength="255"></label>
+      <label>Precio (MXN)<input name="precioReceta" type="number" min="0" step="0.01" [(ngModel)]="formularioReceta.price"></label>
+      <label>Tiempo de preparación<input name="tiempoReceta" [(ngModel)]="formularioReceta.time" placeholder="25 min"></label>
+      <label>Porciones<input name="porcionesReceta" type="number" min="1" [(ngModel)]="formularioReceta.servings"></label>
+      <label>Dificultad<select name="dificultadReceta" [(ngModel)]="formularioReceta.difficulty"><option>Fácil</option><option>Media</option><option>Difícil</option></select></label>
+      <label>Categoría<select name="etiquetaReceta" [(ngModel)]="formularioReceta.tag"><option value="">Sin categoría</option><option *ngFor="let categoria of categorias" [ngValue]="categoria.name">{{ categoria.name }}</option></select></label>
+      <label>ID país (opcional)<input name="paisReceta" type="number" min="1" [(ngModel)]="formularioReceta.idPais"></label>
+      <label class="campo-completo">Descripción<textarea name="descripcionReceta" rows="3" [(ngModel)]="formularioReceta.description"></textarea></label>
+      <label class="checkbox-admin"><input type="checkbox" name="recetaActiva" [(ngModel)]="formularioReceta.active"> Receta activa</label>
+      <div class="acciones-admin campo-completo"><button class="boton-principal" type="submit" [disabled]="guardando">{{ guardando ? 'Guardando…' : recetaEditandoId === null ? 'Crear receta' : 'Guardar cambios' }}</button><button *ngIf="recetaEditandoId !== null" class="boton-secundario" type="button" (click)="cancelarTodos()">Cancelar edición</button></div>
+    </form>
+    <h3>Recetas registradas</h3>
+    <div class="tabla-contenedor"><table><thead><tr><th>Receta</th><th>Precio</th><th>Activa</th><th>Acciones</th></tr></thead><tbody>
+      <tr *ngFor="let receta of recetas"><td><strong>{{ receta.name }}</strong><small>ID: {{ receta.id }}</small></td><td>${{ receta.price }}</td><td>{{ receta.active === false ? 'No' : 'Sí' }}</td><td class="acciones-tabla"><button type="button" (click)="editarReceta(receta)">Editar</button><button type="button" class="peligro" (click)="eliminarReceta(receta)">Eliminar</button><a [routerLink]="['/receta', receta.id]">Ver detalle</a></td></tr>
+      <tr *ngIf="!recetas.length"><td colspan="4">Todavía no hay recetas registradas.</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section *ngIf="!cargando && vista === 'categorias'" class="seccion-admin">
+    <h2>{{ categoriaEditandoId === null ? 'Crear categoría' : 'Editar categoría' }}</h2>
+    <form class="formulario-admin" (ngSubmit)="guardarCategoria()">
+      <label>Nombre *<input name="nombreCategoria" [(ngModel)]="formularioCategoria.name" required maxlength="255"></label>
+      <label>Imagen de categoría (enlace)<input name="imagenCategoria" type="url" [(ngModel)]="formularioCategoria.image" maxlength="255"></label>
+      <div class="acciones-admin campo-completo"><button class="boton-principal" type="submit" [disabled]="guardando">{{ categoriaEditandoId === null ? 'Crear categoría' : 'Guardar cambios' }}</button><button *ngIf="categoriaEditandoId !== null" class="boton-secundario" type="button" (click)="cancelarTodos()">Cancelar edición</button></div>
+    </form>
+    <h3>Categorías registradas</h3>
+    <div class="tabla-contenedor"><table><thead><tr><th>Categoría</th><th>ID</th><th>Acciones</th></tr></thead><tbody>
+      <tr *ngFor="let categoria of categorias"><td>{{ categoria.name }}</td><td>{{ categoria.id }}</td><td class="acciones-tabla"><button type="button" (click)="editarCategoria(categoria)">Editar</button><button type="button" class="peligro" (click)="eliminarCategoria(categoria)">Eliminar</button></td></tr>
+      <tr *ngIf="!categorias.length"><td colspan="3">Todavía no hay categorías registradas.</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section *ngIf="!cargando && vista === 'usuarios'" class="seccion-admin">
+    <h2>{{ usuarioEditandoId === null ? 'Crear usuario común' : 'Editar usuario' }}</h2>
+    <p class="nota">Las cuentas nuevas reciben el rol Usuario. Para promover una cuenta a Administrador se requiere asignar el rol explícitamente en PostgreSQL.</p>
+    <form class="formulario-admin" (ngSubmit)="guardarUsuario()">
+      <label>Nombre de usuario *<input name="usuarioNombre" [(ngModel)]="formularioUsuario.username" required maxlength="255"></label>
+      <label>Nombre completo *<input name="usuarioNombreCompleto" [(ngModel)]="formularioUsuario.fullName" required maxlength="255"></label>
+      <label>Correo<input name="usuarioCorreo" type="email" [(ngModel)]="formularioUsuario.email"></label>
+      <label>Contraseña {{ usuarioEditandoId === null ? '*' : '(opcional)' }}<input name="usuarioContrasena" type="password" [(ngModel)]="formularioUsuario.password" [required]="usuarioEditandoId === null" minlength="8" autocomplete="new-password"></label>
+      <label class="checkbox-admin"><input type="checkbox" name="usuarioActivo" [(ngModel)]="formularioUsuario.active"> Cuenta activa</label>
+      <div class="acciones-admin campo-completo"><button class="boton-principal" type="submit" [disabled]="guardando">{{ usuarioEditandoId === null ? 'Crear usuario' : 'Guardar cambios' }}</button><button *ngIf="usuarioEditandoId !== null" class="boton-secundario" type="button" (click)="cancelarTodos()">Cancelar edición</button></div>
+    </form>
+    <h3>Usuarios registrados</h3>
+    <div class="tabla-contenedor"><table><thead><tr><th>Usuario</th><th>Correo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+      <tr *ngFor="let usuario of usuarios"><td><strong>{{ usuario.username }}</strong><small>{{ usuario.fullName }} · ID {{ usuario.id }}</small></td><td>{{ usuario.email || '—' }}</td><td>{{ usuario.active === false ? 'Inactivo' : 'Activo' }}</td><td class="acciones-tabla"><button type="button" (click)="editarUsuario(usuario)">Editar</button><button *ngIf="usuario.id !== idUsuarioActual" type="button" class="peligro" (click)="eliminarUsuario(usuario)">Eliminar</button><span *ngIf="usuario.id === idUsuarioActual">Cuenta actual</span></td></tr>
+      <tr *ngIf="!usuarios.length"><td colspan="4">Todavía no hay usuarios registrados.</td></tr>
+    </tbody></table></div>
+  </section>
+  <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

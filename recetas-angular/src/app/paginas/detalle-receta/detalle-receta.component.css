@@ -1,0 +1,234 @@
+:host { display: block; min-width: 0; }
+
+.detalle {
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  padding: clamp(14px, 3vw, 32px);
+  box-sizing: border-box;
+}
+
+.enlace-volver {
+  margin-bottom: 18px;
+  padding: 9px 0;
+  background: transparent;
+  color: var(--tinta, #2f3029);
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.enlace-volver:hover { text-decoration: underline; }
+
+.mensaje-cargando, .mensaje-error, .sin-datos {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--papel, #fffdf7);
+  color: var(--tinta-suave, #686960);
+}
+.mensaje-error { color: #8f2f26; background: #fff0ed; }
+
+.tarjeta-detalle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--papel, #fffdf7);
+  border: 1px solid var(--linea, #e8e2d5);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.detalle-imagen { min-height: 210px; aspect-ratio: 16 / 9; background: #eee9dc; }
+.detalle-imagen img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.imagen-no-disponible { min-height: 210px; height: 100%; display: grid; place-items: center; color: #77786d; }
+.detalle-info { padding: clamp(18px, 3vw, 30px); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.tarjeta-etiqueta { align-self: flex-start; padding: 6px 10px; border-radius: 999px; background: #e9eddf; color: #45543d; font-size: .82rem; font-weight: 700; }
+.detalle-info h1 { margin: 0; font-family: var(--tipo-serif, Georgia, serif); font-size: clamp(1.5rem, 4vw, 2.3rem); line-height: 1.12; overflow-wrap: anywhere; }
+.descripcion { margin: 0; color: var(--tinta-suave, #686960); line-height: 1.65; white-space: pre-line; }
+.detalle-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--tinta-suave, #686960); font-size: .9rem; }
+.detalle-meta small { font-size: .8em; }
+.detalle-precio { margin: 2px 0 0; color: var(--calabaza-os, #9a4c26); font-family: var(--tipo-serif, Georgia, serif); font-size: 1.5rem; font-weight: 700; }
+
+.seccion-detalle { margin-top: clamp(22px, 4vw, 36px); }
+.seccion-detalle h2 { margin: 0 0 14px; font-family: var(--tipo-serif, Georgia, serif); font-size: clamp(1.2rem, 2.6vw, 1.65rem); color: var(--tinta, #2f3029); }
+.galeria-imagenes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 12px; }
+.galeria-imagenes img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid var(--linea, #e8e2d5); }
+
+.lista-ingredientes, .lista-pasos { margin: 0; padding: 0; list-style: none; }
+.lista-ingredientes { border: 1px solid var(--linea, #e8e2d5); border-radius: 14px; overflow: hidden; background: var(--papel, #fffdf7); }
+.lista-ingredientes li { display: flex; justify-content: space-between; gap: 14px; padding: 12px 14px; border-bottom: 1px solid var(--linea, #e8e2d5); }
+.lista-ingredientes li:last-child { border-bottom: 0; }
+.nombre-ingrediente { font-weight: 600; }
+.cantidad-ingrediente { text-align: right; color: var(--tinta-suave, #686960); white-space: normal; }
+.lista-pasos { display: grid; gap: 12px; }
+.lista-pasos li { padding: 15px 16px; border-radius: 13px; background: var(--papel, #fffdf7); border: 1px solid var(--linea, #e8e2d5); }
+.paso-cabecera, .valoracion-cabecera { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.paso-cabecera span { color: var(--tinta-suave, #686960); font-size: .9rem; }
+.lista-pasos p { margin: 8px 0 0; white-space: pre-line; line-height: 1.6; }
+.lista-etiquetas { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.lista-etiquetas li { border-radius: 999px; padding: 8px 12px; background: #f1eadc; color: #5c4b30; }
+
+.tabla-contenedor { overflow-x: auto; border: 1px solid var(--linea, #e8e2d5); border-radius: 12px; }
+.tabla-nutricion { width: 100%; border-collapse: collapse; background: var(--papel, #fffdf7); }
+.tabla-nutricion th, .tabla-nutricion td { padding: 11px 14px; border-bottom: 1px solid var(--linea, #e8e2d5); text-align: left; }
+.tabla-nutricion tr:last-child th, .tabla-nutricion tr:last-child td { border-bottom: 0; }
+.tabla-nutricion th { width: 55%; font-weight: 600; }
+.tabla-nutricion td { color: var(--tinta-suave, #686960); }
+.lista-valoraciones { display: grid; gap: 12px; }
+.tarjeta-valoracion { padding: 15px 16px; border-radius: 13px; border: 1px solid var(--linea, #e8e2d5); background: var(--papel, #fffdf7); }
+.valoracion-cabecera span { color: var(--calabaza-os, #9a4c26); font-weight: 700; }
+.tarjeta-valoracion p { margin: 9px 0; line-height: 1.55; white-space: pre-line; }
+.tarjeta-valoracion time { color: var(--tinta-suave, #686960); font-size: .82rem; }
+
+@media (min-width: 720px) {
+  .tarjeta-detalle { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .detalle-imagen { aspect-ratio: auto; min-height: 320px; height: 100%; }
+  .detalle-info { justify-content: center; }
+}
+
+@media (max-width: 420px) {
+  .lista-ingredientes li { align-items: flex-start; }
+  .cantidad-ingrediente { max-width: 45%; }
+  .detalle-meta { font-size: .84rem; }
+}
+
+/* Controles para administrar ingredientes y pasos sin simular marcos de dispositivo. */
+.mensaje-accion {
+  padding: 12px 15px;
+  margin: 0 0 12px;
+  border-radius: 12px;
+  color: #2f6138;
+  background: #eaf5e9;
+  border: 1px solid #cfe5cd;
+}
+.encabezado-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.encabezado-seccion h2 { margin-bottom: 0; }
+.boton-accion, .boton-secundario, .boton-texto {
+  border: 1px solid var(--linea, #e8e2d5);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.boton-accion { color: var(--tinta, #2f3029); background: #e9eddf; }
+.boton-accion.principal { border-color: #596a4d; color: #fff; background: #596a4d; }
+.boton-secundario { color: var(--tinta, #2f3029); background: transparent; }
+.boton-texto { padding: 5px 8px; color: #45543d; background: transparent; border-color: transparent; }
+.boton-texto.peligro { color: #9a342d; }
+.boton-accion:hover, .boton-secundario:hover, .boton-texto:hover { filter: brightness(.96); }
+.boton-accion:disabled, .boton-secundario:disabled, .boton-texto:disabled { opacity: .55; cursor: not-allowed; }
+.formulario-contenido, .formulario-edicion {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: clamp(14px, 2.5vw, 20px);
+  border: 1px solid var(--linea, #e8e2d5);
+  border-radius: 14px;
+  background: var(--papel, #fffdf7);
+}
+.formulario-edicion { width: 100%; box-sizing: border-box; margin: 0; }
+.campo-formulario { display: grid; gap: 6px; min-width: 0; flex: 1 1 150px; }
+.campo-formulario label { color: var(--tinta, #2f3029); font-size: .88rem; font-weight: 700; }
+.campo-formulario input, .campo-formulario textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border: 1px solid #d9d3c6;
+  border-radius: 9px;
+  color: var(--tinta, #2f3029);
+  background: #fff;
+  font: inherit;
+}
+.campo-formulario textarea { resize: vertical; }
+.campo-formulario input:focus, .campo-formulario textarea:focus { outline: 2px solid #aab99c; outline-offset: 1px; }
+.campos-en-linea { display: flex; flex-wrap: wrap; gap: 12px; }
+.campo-ancho-completo { width: 100%; }
+.ayuda-formulario { margin: -3px 0 0; color: var(--tinta-suave, #686960); font-size: .85rem; line-height: 1.45; }
+.acciones-formulario, .acciones-fila { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.dato-ingrediente { display: flex; justify-content: space-between; flex: 1; gap: 14px; min-width: 0; }
+.lista-ingredientes li { align-items: center; flex-wrap: wrap; }
+.lista-ingredientes li > .formulario-edicion { flex-basis: 100%; }
+.lista-pasos li .acciones-fila { margin-top: 10px; }
+
+@media (max-width: 520px) {
+  .encabezado-seccion { align-items: flex-start; }
+  .boton-accion { max-width: 100%; }
+  .dato-ingrediente { width: 100%; }
+  .acciones-fila { width: 100%; }
+  .campos-en-linea { display: grid; grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Controles de equipo, nutrición y valoraciones agregados al detalle de recetas. */
+.lista-etiquetas li { display: flex; align-items: center; gap: 10px; }
+.lista-etiquetas li span { overflow-wrap: anywhere; }
+.campo-formulario select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border: 1px solid #d9d3c6;
+  border-radius: 9px;
+  color: var(--tinta, #2f3029);
+  background: #fff;
+  font: inherit;
+}
+.formulario-contenido h3 { margin: 0; font-family: var(--tipo-serif, Georgia, serif); }
+
+/* Administración de imágenes y acceso rápido a favoritos. */
+.acciones-cabecera-detalle { margin-top: 4px; }
+.boton-accion.favorito { align-self: flex-start; border-color: #e7c5c5; background: #fff3f3; color: #8a2e43; }
+.opcion-checkbox { display: flex; align-items: center; gap: 9px; color: var(--tinta, #2f3029); font-size: .9rem; font-weight: 600; }
+.opcion-checkbox input { width: auto; }
+.lista-imagenes-administracion { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.lista-imagenes-administracion li { display: grid; grid-template-columns: minmax(100px, 150px) minmax(0, 1fr); gap: 14px; padding: 12px; border: 1px solid var(--linea, #e8e2d5); border-radius: 14px; background: var(--papel, #fffdf7); }
+.lista-imagenes-administracion img { display: block; width: 100%; height: 105px; object-fit: cover; border-radius: 9px; background: #eee9dc; }
+.datos-imagen-administracion { display: grid; align-content: center; gap: 8px; min-width: 0; }
+.insignia-portada { justify-self: start; padding: 4px 8px; border-radius: 999px; background: #e9eddf; color: #45543d; font-size: .8rem; }
+.url-imagen { overflow-wrap: anywhere; color: var(--tinta-suave, #686960); font-size: .84rem; }
+@media (max-width: 520px) {
+  .lista-imagenes-administracion li { grid-template-columns: minmax(0, 1fr); }
+  .lista-imagenes-administracion img { height: auto; max-height: 210px; aspect-ratio: 16 / 9; }
+}
+
+/* Presentación editorial y controles responsive del detalle. */
+.detalle{width:min(100%,1280px);padding:clamp(14px,3vw,40px)}
+.enlace-volver{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;background:#fff;border:1px solid var(--linea);border-radius:999px;color:var(--bosque);box-shadow:0 5px 16px rgba(13,47,33,.05)}
+.enlace-volver:hover{background:#e9f4e6;text-decoration:none;transform:translateX(-2px)}
+.tarjeta-detalle{grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);border:0;border-radius:28px;box-shadow:0 24px 60px rgba(12,47,32,.12);background:#fff}
+.detalle-imagen{min-height:320px;background:#e5efe4;position:relative;overflow:hidden}
+.detalle-imagen img{transition:transform .6s ease}.tarjeta-detalle:hover .detalle-imagen img{transform:scale(1.025)}
+.detalle-info{padding:clamp(22px,4vw,52px);gap:17px}
+.detalle-info h1{font-size:clamp(2rem,4.5vw,4rem);letter-spacing:-.055em;line-height:1.02;color:var(--bosque)}
+.tarjeta-etiqueta{background:#e5f2de;color:#24583d;padding:7px 12px}
+.descripcion{font-size:1rem;line-height:1.75;max-width:60ch}
+.detalle-meta{gap:8px;align-items:center}.detalle-meta span{background:#f4f8f1;border:1px solid #e4ede2;border-radius:999px;padding:7px 10px;font-size:.8rem;color:#456454}
+.detalle-precio{font:800 clamp(1.6rem,3vw,2.2rem)/1.2 var(--tipo-sans);color:var(--bosque)}
+.seccion-detalle{margin-top:clamp(26px,5vw,54px);padding:clamp(16px,2.7vw,28px);background:rgba(255,255,255,.8);border:1px solid rgba(220,231,221,.9);border-radius:24px;box-shadow:0 10px 32px rgba(13,47,33,.045)}
+.seccion-detalle h2{font-size:clamp(1.35rem,2.8vw,1.9rem);letter-spacing:-.035em;color:var(--bosque)}
+.encabezado-seccion{margin-bottom:18px}
+.boton-accion,.boton-secundario,.boton-texto{border-radius:12px;padding:10px 14px;font-weight:800}
+.boton-accion{background:#e6f3df;color:#1f593b;border-color:#d8e8d1}.boton-accion.principal{background:linear-gradient(135deg,#164a34,#2d7a52);border-color:#164a34}
+.boton-accion.favorito{border-color:#f0d4d8;background:#fff0f1;color:#a2364c}
+.formulario-contenido,.formulario-edicion{border-radius:18px;border-color:#dfe9dc;background:#fbfdf9;padding:clamp(14px,2.5vw,24px)}
+.campo-formulario input,.campo-formulario textarea,.campo-formulario select{border-radius:12px;border-color:#d3e1d4;padding:12px 13px;background:#fff}
+.lista-ingredientes{border:0;display:grid;gap:8px;background:transparent;overflow:visible}
+.lista-ingredientes li{background:#f6faf3;border:1px solid #e4eee1;border-radius:14px;padding:14px 16px}
+.lista-pasos{counter-reset:paso;gap:12px}.lista-pasos li{border:1px solid #e1ece0;border-radius:18px;background:linear-gradient(120deg,#fff,#f7faf3);padding:18px 20px;box-shadow:0 5px 18px rgba(13,47,33,.035)}
+.lista-etiquetas li{background:#e8f3e2;color:#28573d;border:1px solid #dcebd5}
+.tabla-contenedor{border-color:#dfe9dd;border-radius:16px}.tabla-nutricion{font-size:.94rem}.tabla-nutricion th{background:#f4f8f0;color:#2b4f3b}.tabla-nutricion td{background:white}
+.tarjeta-valoracion{background:#fbfdf9;border-color:#e0eadf;border-radius:18px;padding:18px}.valoracion-cabecera span{color:#b66a2c}
+.lista-imagenes-administracion{grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:16px}
+.lista-imagenes-administracion li{grid-template-columns:minmax(0,1fr);padding:10px;border-radius:18px;overflow:hidden;background:#fff}
+.lista-imagenes-administracion img{height:auto;aspect-ratio:4/3;max-height:240px;border-radius:12px}
+.insignia-portada{background:#e4f3dd;color:#1b633c;border:1px solid #d0e8c5;font-weight:800}
+.url-imagen{display:none}
+.pie-legal{margin-top:36px}
+@media(max-width:760px){.tarjeta-detalle{grid-template-columns:minmax(0,1fr)}.detalle-imagen{aspect-ratio:16/10;min-height:0;height:auto}.detalle-info{padding:22px}.seccion-detalle{border-radius:18px}.lista-imagenes-administracion{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}}
+@media(max-width:480px){.detalle{padding:12px}.detalle-meta{gap:6px}.detalle-meta span{font-size:.75rem;padding:6px 8px}.acciones-formulario>*{flex:1 1 100%}.lista-ingredientes li{padding:12px}.tarjeta-detalle{border-radius:20px}}

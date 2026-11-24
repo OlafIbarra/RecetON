@@ -1,0 +1,22 @@
+ :host{display:block;min-height:100vh}
+.indice{width:min(100%,1440px);box-sizing:border-box;margin:0 auto;padding:clamp(16px,3.5vw,48px)}
+.indice-cabecera{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;margin-bottom:clamp(24px,4vw,42px);padding:clamp(24px,4vw,48px);border-radius:30px;background:radial-gradient(circle at 85% 5%,rgba(216,242,165,.23),transparent 26%),linear-gradient(130deg,#09271e,#174a35 62%,#226447);color:#fff;box-shadow:0 24px 55px rgba(9,39,30,.23)}
+.indice-cabecera::after{content:"";position:absolute;z-index:-1;width:290px;aspect-ratio:1;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:13%;bottom:-190px;box-shadow:0 0 0 35px rgba(255,255,255,.025),0 0 0 72px rgba(255,255,255,.02)}
+.indice-cabecera>div:first-child{max-width:540px}
+.indice-logo{display:block;width:clamp(190px,21vw,270px);height:auto;max-height:66px;object-fit:contain;margin:0 0 12px}
+.indice-cabecera h1{font-family:var(--tipo-serif);font-weight:600;font-size:clamp(2.1rem,5vw,4rem);letter-spacing:-.05em;line-height:1.03;margin:18px 0 10px}
+.indice-cabecera p{font-size:clamp(.92rem,1.4vw,1.08rem);line-height:1.65;color:#d5e5d8;margin-top:0}
+.acciones-indice{display:flex;flex-wrap:wrap;gap:9px;align-items:center;max-width:620px}
+.acciones-indice button{border-radius:13px;padding:11px 15px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.09);color:#fff;font:inherit;font-size:.86rem;font-weight:800;backdrop-filter:blur(10px)}
+.acciones-indice button:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
+.acciones-indice .boton-favoritos{background:#fbe9e7;color:#953b4c;border-color:#fbe9e7}.acciones-indice .boton-tienda{background:#d8f2a5;color:#173b2a;border-color:#d8f2a5}.acciones-indice .boton-carrito{background:#fff;color:#173b2a;border-color:#fff}.acciones-indice .boton-salir{background:rgba(255,255,255,.08);color:#fff}
+.indice-opciones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,1.8vw,22px)}
+.indice-opciones app-tarjeta-pantalla{min-width:0}
+.pie-legal{margin-top:36px}
+@media(max-width:1100px){.indice-opciones{grid-template-columns:repeat(2,minmax(0,1fr))}.indice-cabecera{align-items:flex-start}}
+@media(max-width:620px){.indice-logo{width:min(230px,75vw);max-height:58px}.indice{padding:14px}.indice-cabecera{padding:24px 20px;border-radius:22px;gap:18px}.indice-cabecera h1{font-size:2.25rem}.acciones-indice{width:100%}.acciones-indice button{flex:1 1 calc(50% - 9px)}.indice-opciones{grid-template-columns:1fr;gap:12px}}
+@media(max-width:350px){.acciones-indice button{flex-basis:100%}.indice-cabecera h1{font-size:1.85rem}}
+
+.acciones-indice .boton-privacidad{display:inline-flex;align-items:center;justify-content:center;border-radius:13px;padding:11px 15px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;font:800 .86rem var(--tipo-sans);text-decoration:none}.acciones-indice .boton-privacidad:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
+
+.acciones-indice .boton-pedidos{background:#e8f5f0;color:#123d2c;border-color:#e8f5f0}

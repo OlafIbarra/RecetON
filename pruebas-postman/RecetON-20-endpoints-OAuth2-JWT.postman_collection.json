@@ -1,0 +1,882 @@
+{
+  "info": {
+    "_postman_id": "f4d5ec6a-f1ba-412b-8e14-e76e03cb4096",
+    "name": "RecetON - CRUD 20 endpoints (OAuth 2.0 + JWT)",
+    "description": "Colección de evaluación para RecetON. Antes de ejecutar los 20 endpoints CRUD, obtén un access token mediante OAuth 2.0 Authorization Code + PKCE desde la pestaña Authorization de esta colección y pulsa Use Token. La colección y las solicitudes CRUD heredan esta autorización. La carpeta 00 contiene diagnósticos que intencionalmente no usan token y no cuenta en los 20 endpoints. Requiere una cuenta activa con rol Administrador para las escrituras y el CRUD de usuarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Diagnóstico y seguridad (no cuenta en los 20 CRUD)",
+      "description": "Ejecuta estas comprobaciones antes de autenticarte. La última solicitud debe dar 401 intencionalmente porque no envía token.",
+      "item": [
+        {
+          "name": "A. GET /saludo - comprobar backend",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/saludo",
+            "description": "Debe responder 200 OK. Confirma que Spring Boot está escuchando en la IP y puerto configurados.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Backend responde 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B. GET /oauth2/jwks - consultar clave pública",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/oauth2/jwks",
+            "description": "Debe responder 200 y devolver un objeto JSON con un arreglo keys. No es un endpoint CRUD.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"JWKS responde 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Incluye arreglo de claves públicas\", function () { pm.expect(pm.response.json().keys).to.be.an(\"array\").that.is.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C. GET /api/categorias sin token - debe rechazar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/categorias",
+            "description": "Esta prueba es negativa: espera 401 Unauthorized cuando la solicitud no lleva JWT.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"La API rechaza peticiones sin token\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Categorías (4 endpoints)",
+      "item": [
+        {
+          "name": "01. GET listar categorías",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/categorias",
+            "description": "Consulta todos los registros. Requiere token válido; lectura disponible según permisos.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Respuesta JSON tipo lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02. POST crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/categorias",
+            "description": "Crea una categoría de prueba. Guarda el id devuelto para PUT y DELETE.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría Postman {{categoriaSuffix}}\",\n  \"image\": \"https://example.com/receton-categoria-prueba.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"categoriaSuffix\", Date.now().toString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Se devuelve el identificador\", function () { pm.expect(d.id).to.exist; });",
+                  "pm.environment.set(\"categoriaId\", String(d.id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03. PUT actualizar categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/categorias/{{categoriaId}}",
+            "description": "Actualiza la categoría recién creada.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría Postman actualizada {{categoriaSuffix}}\",\n  \"image\": \"https://example.com/receton-categoria-prueba-actualizada.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04. DELETE eliminar categoría de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/categorias/{{categoriaId}}",
+            "description": "Elimina únicamente la categoría creada por esta colección. Esperado: 204 No Content.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Recetas (GET, POST y PUT; DELETE se ejecuta al final)",
+      "item": [
+        {
+          "name": "05. GET listar recetas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/recetas",
+            "description": "Consulta el catálogo de recetas.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Respuesta tipo lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06. POST crear receta de prueba",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/recetas",
+            "description": "Crea la receta temporal que utilizarán los endpoints de imágenes y productos. idPais se envía como null; si el esquema local exige un país, usa un idPais existente y válido.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Receta Postman {{recipeSuffix}}\",\n  \"image\": \"https://example.com/receton-receta-prueba.jpg\",\n  \"price\": \"0.00\",\n  \"rating\": 4.5,\n  \"time\": \"20 min\",\n  \"tag\": \"Prueba Postman\",\n  \"tagColor\": \"#2E7D32\",\n  \"description\": \"Receta temporal para validar los endpoints de RecetON.\",\n  \"idUsuario\": {{adminId}},\n  \"idPais\": null,\n  \"servings\": 2,\n  \"difficulty\": \"Fácil\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"recipeSuffix\", Date.now().toString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Se devuelve el id de la receta\", function () { pm.expect(d.id).to.exist; });",
+                  "pm.environment.set(\"recipeId\", String(d.id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07. PUT actualizar receta de prueba",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/recetas/{{recipeId}}",
+            "description": "Actualiza el registro creado en el paso anterior.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Receta Postman actualizada {{recipeSuffix}}\",\n  \"image\": \"https://example.com/receton-receta-prueba-actualizada.jpg\",\n  \"price\": \"0.00\",\n  \"rating\": 4.6,\n  \"time\": \"25 min\",\n  \"tag\": \"Prueba Postman\",\n  \"tagColor\": \"#2E7D32\",\n  \"description\": \"Receta temporal actualizada desde Postman.\",\n  \"idUsuario\": {{adminId}},\n  \"idPais\": null,\n  \"servings\": 3,\n  \"difficulty\": \"Fácil\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Imágenes de receta (4 endpoints)",
+      "item": [
+        {
+          "name": "08. GET listar imágenes de la receta de prueba",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/recetas/{{recipeId}}/imagenes",
+            "description": "Consulta imágenes asociadas a la receta creada en el apartado Recetas.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Respuesta tipo lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09. POST agregar imagen a receta de prueba",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/recetas/{{recipeId}}/imagenes",
+            "description": "Registra una imagen adicional con URL HTTP/HTTPS y guarda su id para PUT/DELETE.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"urlImagen\": \"https://example.com/receton-imagen-postman-{{imageSuffix}}.jpg\",\n  \"esPortada\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"imageSuffix\", Date.now().toString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Se devuelve el id de la imagen\", function () { pm.expect(d.idImagen).to.exist; });",
+                  "pm.environment.set(\"imageId\", String(d.idImagen));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. PUT establecer imagen como portada",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/recetas/{{recipeId}}/imagenes/{{imageId}}/portada",
+            "description": "Este es el PUT existente en este controlador: establece la imagen indicada como portada; no es un PUT genérico de todos los campos.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. DELETE eliminar imagen de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/recetas/{{recipeId}}/imagenes/{{imageId}}",
+            "description": "Elimina la imagen añadida por la colección. La respuesta actual devuelve la lista de imágenes restante (200).",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Productos (4 endpoints)",
+      "item": [
+        {
+          "name": "12. GET listar productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/productos",
+            "description": "Consulta el catálogo de productos.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Respuesta tipo lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. POST crear producto de prueba",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/productos",
+            "description": "Crea un producto vinculado a la receta temporal. El producto queda sin ventas/carrito, por lo que debe poder eliminarse en la prueba.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idReceta\": {{recipeId}},\n  \"nombreProducto\": \"Producto Postman {{productSuffix}}\",\n  \"descripcion\": \"Producto temporal para probar la API.\",\n  \"precio\": 99.9,\n  \"stock\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"productSuffix\", Date.now().toString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Se devuelve el id del producto\", function () { pm.expect(d.idProducto).to.exist; });",
+                  "pm.environment.set(\"productId\", String(d.idProducto));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14. PUT actualizar producto de prueba",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/productos/{{productId}}",
+            "description": "Actualiza los campos admitidos por SolicitudProducto.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idReceta\": {{recipeId}},\n  \"nombreProducto\": \"Producto Postman actualizado {{productSuffix}}\",\n  \"descripcion\": \"Producto temporal actualizado desde Postman.\",\n  \"precio\": 109.9,\n  \"stock\": 8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15. DELETE eliminar producto de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/productos/{{productId}}",
+            "description": "Elimina el producto temporal. Puede fallar con 409 si se ha añadido a un carrito o pedido.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 - Recetas: DELETE de prueba (se ejecuta después de Imágenes y Productos)",
+      "item": [
+        {
+          "name": "16. DELETE eliminar receta temporal",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/recetas/{{recipeId}}",
+            "description": "Se coloca al final de los recursos dependientes para no borrar la receta antes de probar imágenes y productos. Esperado: 204 No Content.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 - Usuarios (4 endpoints; requiere rol Administrador)",
+      "item": [
+        {
+          "name": "17. GET listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/usuarios",
+            "description": "Endpoint administrativo. Requiere token válido y rol Administrador.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Respuesta tipo lista\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18. POST crear usuario temporal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/usuarios",
+            "description": "Crea un usuario de prueba con contraseña de más de 8 caracteres. Se asigna el rol común por defecto; solo una cuenta admin puede ejecutar este CRUD.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"qa.postman.{{userSuffix}}\",\n  \"email\": \"qa.{{userSuffix}}@example.com\",\n  \"password\": \"PruebaSegura123\",\n  \"fullName\": \"Usuario de prueba Postman\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"userSuffix\", Date.now().toString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Se devuelve el id del usuario\", function () { pm.expect(d.id).to.exist; });",
+                  "pm.environment.set(\"userTestId\", String(d.id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19. PUT actualizar usuario temporal",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/usuarios/{{userTestId}}",
+            "description": "Actualiza el usuario creado por la colección. Mantiene username y email únicos con el sufijo generado.",
+            "auth": {
+              "type": "inherit"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"qa.postman.{{userSuffix}}\",\n  \"email\": \"qa.{{userSuffix}}@example.com\",\n  \"password\": \"PruebaSegura123\",\n  \"fullName\": \"Usuario de prueba Postman actualizado\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20. DELETE eliminar usuario temporal",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/usuarios/{{userTestId}}",
+            "description": "Elimina solo al usuario temporal de pruebas. Esperado: 204 No Content.",
+            "auth": {
+              "type": "inherit"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://172.20.10.2:8080",
+      "type": "string",
+      "description": "Cambiar por IP actual del servidor si cambió de 172.20.10.2"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "{{baseUrl}}/oauth2/token",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{baseUrl}}/oauth2/authorize",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "receton-angular",
+        "type": "string"
+      },
+      {
+        "key": "clientSecret",
+        "value": "",
+        "type": "string"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "api.read api.write",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://oauth.pstmn.io/v1/callback",
+        "type": "string"
+      },
+      {
+        "key": "challengeAlgorithm",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "RecetON JWT LAN",
+        "type": "string"
+      },
+      {
+        "key": "state",
+        "value": "6cd7ee02-3bf3-4f7a-b532-29bbb6b2a3e0",
+        "type": "string"
+      },
+      {
+        "key": "useBrowser",
+        "value": true,
+        "type": "boolean"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "tokenType",
+        "value": "Bearer",
+        "type": "string"
+      }
+    ]
+  }
+}

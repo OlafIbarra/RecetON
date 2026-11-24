@@ -1,0 +1,103 @@
+RECETON - PRUEBAS ALTERNATIVAS CON CMD Y CURL
+Versión: OAuth 2.0 Authorization Code + PKCE y JWT (access token de 20 minutos)
+Servidor por defecto: http://api.receton.test:8080
+
+IMPORTANTE
+- Ejecuta los comandos desde CMD (Símbolo del sistema), no desde la consola SQL.
+- El equipo cliente debe tener conectividad de red con la laptop servidor. Si cambia la IP del servidor, actualiza el archivo hosts en ambas laptops con los scripts del ZIP 04; no cambies estos comandos.
+- Las rutas protegidas /api/** requieren Authorization: Bearer <JWT vigente>.
+- La autenticación es OAuth 2.0 Authorization Code + PKCE; las rutas protegidas reciben un access token JWT firmado.
+- Usa una cuenta activa con rol Administrador para los CRUD de escritura y el CRUD de usuarios.
+
+A) COMPROBAR CONECTIVIDAD (no requiere autenticación)
+  curl.exe -i http://api.receton.test:8080/saludo
+  curl.exe -i http://api.receton.test:8080/adios
+
+Respuesta esperada en /saludo: HTTP 200 y texto "Holaaaaa que hace".
+
+B) OBTENER JWT PARA LAS PRUEBAS
+El flujo configurado es OAuth 2.0 Authorization Code + PKCE. No uses el endpoint antiguo /api/autenticacion/iniciar-sesion: la colección de esta versión usa el servidor de autorización /oauth2/authorize y /oauth2/token.
+
+Forma recomendada (Postman): en la colección, pestaña Authorization, pulsa Get New Access Token con Authorization Code (With PKCE), callback https://oauth.pstmn.io/v1/callback, client_id receton-angular, scopes api.read api.write y SHA-256. Inicia sesión en el formulario seguro y pulsa Use Token.
+
+Alternativa para ejecutar los comandos CMD después de obtener el token: copia el access_token en la sesión local de CMD, sin compartirlo ni incluirlo en capturas:
+  set "RECETON_TOKEN=PEGAR_ACCESS_TOKEN_JWT"
+
+El JWT vence a los 20 minutos según la configuración actual. Cuando expire, obtén uno nuevo mediante OAuth 2.0. No coloques credenciales ni tokens en documentos compartidos.
+
+C) CONSULTA PROTEGIDA
+  curl.exe -i "http://api.receton.test:8080/api/categorias" -H "Authorization: Bearer %RECETON_TOKEN%"
+
+D) LOS 20 ENDPOINTS DEL MANUAL
+La colección de Postman ya contiene cuerpos y variables automatizadas. Para CMD, ejecuta cada comando individualmente y reemplaza los IDs de ejemplo por los que devuelve el POST anterior.
+
+1. CATEGORÍAS
+GET
+  curl.exe -i "http://api.receton.test:8080/api/categorias" -H "Authorization: Bearer %RECETON_TOKEN%"
+POST
+  curl.exe -i -X POST "http://api.receton.test:8080/api/categorias" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"name\":\"Categoria CMD prueba\",\"image\":\"https://example.com/categoria-cmd.jpg\"}"
+PUT (reemplaza ID_CATEGORIA)
+  curl.exe -i -X PUT "http://api.receton.test:8080/api/categorias/ID_CATEGORIA" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"name\":\"Categoria CMD actualizada\",\"image\":\"https://example.com/categoria-cmd-actualizada.jpg\"}"
+DELETE (elimina solo un registro de prueba)
+  curl.exe -i -X DELETE "http://api.receton.test:8080/api/categorias/ID_CATEGORIA" -H "Authorization: Bearer %RECETON_TOKEN%"
+
+2. RECETAS
+GET
+  curl.exe -i "http://api.receton.test:8080/api/recetas" -H "Authorization: Bearer %RECETON_TOKEN%"
+POST (reemplaza ID_ADMIN por el id_usuario del administrador; idPais null es opcional en el esquema revisado)
+  curl.exe -i -X POST "http://api.receton.test:8080/api/recetas" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"name\":\"Receta CMD prueba\",\"image\":\"https://example.com/receta-cmd.jpg\",\"price\":\"0.00\",\"rating\":4.5,\"time\":\"20 min\",\"tag\":\"Prueba Postman\",\"tagColor\":\"#2E7D32\",\"description\":\"Prueba por CMD\",\"idUsuario\":ID_ADMIN,\"idPais\":null,\"servings\":2,\"difficulty\":\"Facil\",\"active\":true}"
+PUT (reemplaza ID_RECETA e ID_ADMIN)
+  curl.exe -i -X PUT "http://api.receton.test:8080/api/recetas/ID_RECETA" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"name\":\"Receta CMD actualizada\",\"image\":\"https://example.com/receta-cmd-actualizada.jpg\",\"price\":\"0.00\",\"rating\":4.5,\"time\":\"25 min\",\"tag\":\"Prueba Postman\",\"tagColor\":\"#2E7D32\",\"description\":\"Actualización por CMD\",\"idUsuario\":ID_ADMIN,\"idPais\":null,\"servings\":2,\"difficulty\":\"Facil\",\"active\":true}"
+DELETE (reemplaza ID_RECETA después de probar imágenes y productos)
+  curl.exe -i -X DELETE "http://api.receton.test:8080/api/recetas/ID_RECETA" -H "Authorization: Bearer %RECETON_TOKEN%"
+
+3. IMÁGENES DE RECETA (ID_RECETA debe existir)
+GET
+  curl.exe -i "http://api.receton.test:8080/api/recetas/ID_RECETA/imagenes" -H "Authorization: Bearer %RECETON_TOKEN%"
+POST
+  curl.exe -i -X POST "http://api.receton.test:8080/api/recetas/ID_RECETA/imagenes" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"urlImagen\":\"https://example.com/imagen-cmd-prueba.jpg\",\"esPortada\":false}"
+PUT establecer portada (usa el ID_IMAGEN devuelto por POST)
+  curl.exe -i -X PUT "http://api.receton.test:8080/api/recetas/ID_RECETA/imagenes/ID_IMAGEN/portada" -H "Authorization: Bearer %RECETON_TOKEN%"
+DELETE imagen de prueba
+  curl.exe -i -X DELETE "http://api.receton.test:8080/api/recetas/ID_RECETA/imagenes/ID_IMAGEN" -H "Authorization: Bearer %RECETON_TOKEN%"
+
+4. PRODUCTOS
+GET
+  curl.exe -i "http://api.receton.test:8080/api/productos" -H "Authorization: Bearer %RECETON_TOKEN%"
+POST (ID_RECETA debe existir; este producto temporal no debe agregarse al carrito/pedido)
+  curl.exe -i -X POST "http://api.receton.test:8080/api/productos" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"idReceta\":ID_RECETA,\"nombreProducto\":\"Producto CMD prueba\",\"descripcion\":\"Producto temporal por CMD\",\"precio\":99.90,\"stock\":10}"
+PUT (reemplaza ID_PRODUCTO e ID_RECETA)
+  curl.exe -i -X PUT "http://api.receton.test:8080/api/productos/ID_PRODUCTO" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"idReceta\":ID_RECETA,\"nombreProducto\":\"Producto CMD actualizado\",\"descripcion\":\"Producto actualizado por CMD\",\"precio\":109.90,\"stock\":8}"
+DELETE (solo si no forma parte de carrito o pedido)
+  curl.exe -i -X DELETE "http://api.receton.test:8080/api/productos/ID_PRODUCTO" -H "Authorization: Bearer %RECETON_TOKEN%"
+
+5. USUARIOS (solo Administrador; usa nombre y correo nuevos)
+GET
+  curl.exe -i "http://api.receton.test:8080/api/usuarios" -H "Authorization: Bearer %RECETON_TOKEN%"
+POST
+  curl.exe -i -X POST "http://api.receton.test:8080/api/usuarios" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"username\":\"qa.cmd.usuario1\",\"email\":\"qa.cmd.usuario1@example.com\",\"password\":\"PruebaSegura123\",\"fullName\":\"Usuario temporal CMD\",\"active\":true}"
+PUT (reemplaza ID_USUARIO; password puede omitirse si no se quiere cambiar)
+  curl.exe -i -X PUT "http://api.receton.test:8080/api/usuarios/ID_USUARIO" -H "Authorization: Bearer %RECETON_TOKEN%" -H "Content-Type: application/json" -d "{\"username\":\"qa.cmd.usuario1\",\"email\":\"qa.cmd.usuario1@example.com\",\"fullName\":\"Usuario temporal CMD actualizado\",\"active\":true}"
+DELETE (elimina únicamente el usuario temporal creado)
+  curl.exe -i -X DELETE "http://api.receton.test:8080/api/usuarios/ID_USUARIO" -H "Authorization: Bearer %RECETON_TOKEN%"
+
+E) CÓMO INTERPRETAR ERRORES
+- 200: lectura o actualización correcta; algunas operaciones de imágenes devuelven la lista resultante.
+- 201: registro creado.
+- 204: eliminación correcta, sin cuerpo de respuesta.
+- 400: datos de entrada inválidos o faltantes.
+- 401: JWT ausente, inválido o expirado, o sesión de autorización incompleta.
+- 403: el usuario autenticado no tiene rol Administrador para esa operación.
+- 404: ID o recurso no encontrado.
+- 409: conflicto de datos; por ejemplo, un producto asociado a carrito/pedido o nombre duplicado.
+- curl error 7 / conexión rechazada: backend apagado, IP/puerto incorrectos o firewall/red bloqueando.
+
+F) SI HAY QUE ARRANCAR EL BACKEND DE NUEVO
+Abre CMD y entra al directorio backend ANTES de ejecutar Gradle. Cambia la ruta si el proyecto está guardado en otra ubicación:
+  cd /d "C:\Users\olaf_\OneDrive\Escritorio\proyecto_noe\backend"
+  gradlew.bat bootRun
+
+Si escribes gradlew.bat desde C:\Users\olaf_ y no estás en la carpeta backend, Windows dirá que no reconoce el comando. Si ya está activo y netstat muestra LISTENING en 0.0.0.0:8080, no hace falta iniciar una segunda instancia.
+
+G) REQUISITO PENDIENTE DEL PROYECTO
+Estado actual: OAuth 2.0 Authorization Code + PKCE y access tokens JWT de 20 minutos. La autorización se inicia desde Postman o Angular; los comandos curl solo ejecutan peticiones una vez que tengas un JWT vigente.

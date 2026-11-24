@@ -1,0 +1,16 @@
+ :host{display:block;min-height:100vh}
+.telefono{width:100%;max-width:none;min-height:100vh;margin:0;display:flex;flex-direction:column;background:transparent;box-shadow:none}
+.telefono-contenido{width:min(100%,1400px);box-sizing:border-box;flex:1;display:flex;flex-direction:column;gap:clamp(18px,3vw,28px);padding:clamp(14px,3vw,36px);margin:0 auto}
+.encabezado-movil{display:grid;gap:6px;padding:4px 0}
+.encabezado-movil .marca{display:inline-flex;align-items:center;gap:7px;color:var(--salvia);font-size:.7rem;font-weight:900;letter-spacing:.15em}
+.encabezado-movil h1{margin:5px 0 0;font:600 clamp(1.8rem,4vw,3rem)/1.04 var(--tipo-serif);letter-spacing:-.045em;color:var(--bosque)}
+.encabezado-movil p{margin:0;color:var(--tinta-suave);font-size:.95rem}
+.telefono-contenido>app-barra-busqueda{max-width:700px}
+.telefono .encabezado-seccion,.tableta .encabezado-seccion{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.encabezado-seccion .titulo-seccion{font-size:clamp(1.15rem,2vw,1.55rem)}
+.ver-mas{font-size:.85rem;font-weight:800;color:var(--bosque)}
+.pie-legal{margin-bottom:6px}
+@media(max-width:520px){.telefono-contenido{padding:16px 12px 18px}.encabezado-seccion{align-items:flex-start!important}.encabezado-seccion .titulo-seccion{font-size:1.08rem}}
+
+/* Separación del módulo de recetas externas */
+.seccion-descubre-recetas{margin-block:clamp(18px,3vw,32px);min-width:0;}

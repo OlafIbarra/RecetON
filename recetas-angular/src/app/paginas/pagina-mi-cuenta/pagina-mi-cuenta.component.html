@@ -1,0 +1,56 @@
+<main class="cuenta-page">
+  <header class="cuenta-hero">
+    <button class="cuenta-back" type="button" (click)="volver()">← Regresar a la pantalla anterior</button>
+    <div class="hero-copy"><span class="eyebrow">RecetON · PERFIL PERSONAL</span><h1>Tu cuenta,<br><em>bajo tu control.</em></h1><p>Consulta tus datos, actualiza el perfil y protege el acceso a tu cuenta desde un solo lugar.</p></div>
+    <img class="hero-mark" src="/assets/icons/icon-192x192.png" alt="Icono de RecetON">
+  </header>
+
+  <p *ngIf="cargando" class="feedback" role="status">Cargando los datos de tu cuenta…</p>
+  <p *ngIf="error" class="feedback feedback-error" role="alert">{{ error }}</p>
+  <p *ngIf="mensaje" class="feedback feedback-success" role="status">{{ mensaje }}</p>
+
+  <section class="profile-card" *ngIf="perfil as p">
+    <div class="section-heading"><div><span class="section-kicker">01 / PERFIL</span><h2>Información de tu cuenta</h2><p>Esta información se consulta en el servidor mediante tu sesión autenticada.</p></div><div class="heading-actions"><span class="status-pill" [class.status-off]="!p.active">{{ p.active ? 'Cuenta activa' : 'Cuenta inactiva' }}</span><button type="button" class="soft-button" (click)="iniciarEdicion()" [disabled]="editarPerfil">Editar perfil</button></div></div>
+
+    <div class="profile-grid" *ngIf="!editarPerfil">
+      <article class="profile-field"><span>Nombre de usuario</span><strong>{{ p.username || 'No disponible' }}</strong></article>
+      <article class="profile-field"><span>Nombre completo</span><strong>{{ p.fullName || 'No disponible' }}</strong></article>
+      <article class="profile-field"><span>Correo electrónico</span><strong>{{ p.email || 'Sin correo registrado' }}</strong></article>
+      <article class="profile-field"><span>Identificador de cuenta</span><strong>#{{ p.id }}</strong></article>
+      <article class="profile-field"><span>Fecha de registro</span><strong>{{ p.dateRegistered ? (p.dateRegistered | date:'longDate') : 'No disponible' }}</strong></article>
+    </div>
+
+    <form class="account-form" *ngIf="editarPerfil" (ngSubmit)="guardarPerfil()">
+      <p class="form-intro">Los cambios se validan en el servidor. No puedes cambiar tu rol ni activar o desactivar tu propia cuenta desde este formulario.</p>
+      <label>Nombre de usuario *<input name="username" [(ngModel)]="formularioPerfil.username" required maxlength="255" autocomplete="username"></label>
+      <label>Nombre completo *<input name="fullName" [(ngModel)]="formularioPerfil.fullName" required maxlength="255" autocomplete="name"></label>
+      <label>Correo electrónico <span class="optional">(opcional)</span><input name="email" [(ngModel)]="formularioPerfil.email" type="email" maxlength="255" autocomplete="email"></label>
+      <div class="form-actions"><button class="primary-button" type="submit" [disabled]="guardandoPerfil">{{ guardandoPerfil ? 'Guardando…' : 'Guardar cambios' }}</button><button class="soft-button" type="button" (click)="cancelarEdicion()" [disabled]="guardandoPerfil">Cancelar</button></div>
+    </form>
+  </section>
+
+  <section class="security-card" *ngIf="perfil">
+    <div class="section-heading"><div><span class="section-kicker">02 / SEGURIDAD</span><h2>Cambiar contraseña</h2><p>Por seguridad, necesitamos verificar tu contraseña actual. Después del cambio tendrás que iniciar sesión nuevamente.</p></div></div>
+    <form class="account-form" (ngSubmit)="cambiarContrasena()">
+      <label>Contraseña actual *<input name="contrasenaActual" [(ngModel)]="formularioContrasena.actual" type="password" required autocomplete="current-password"></label>
+      <div class="two-fields">
+        <label>Nueva contraseña *<input name="contrasenaNueva" [(ngModel)]="formularioContrasena.nueva" type="password" required minlength="8" autocomplete="new-password"><small>Usa al menos 8 caracteres.</small></label>
+        <label>Confirmar nueva contraseña *<input name="confirmarContrasena" [(ngModel)]="formularioContrasena.confirmar" type="password" required minlength="8" autocomplete="new-password"></label>
+      </div>
+      <div class="form-actions"><button class="primary-button" type="submit" [disabled]="cambiandoContrasena">{{ cambiandoContrasena ? 'Actualizando…' : 'Cambiar contraseña' }}</button></div>
+    </form>
+  </section>
+
+  <section class="danger-card" *ngIf="perfil && !auth.esAdministrador()">
+    <div class="danger-copy"><span class="section-kicker">03 / DECISIÓN IMPORTANTE</span><h2>Eliminar mi cuenta</h2><p>Se registrará la baja y se desactivará tu cuenta. El registro de baja definido para el proyecto tendrá una fecha prevista de purga a dos años. Las recetas y los pedidos relacionados no se borran indiscriminadamente.</p><p>Esta acción no se puede deshacer desde la aplicación.</p></div>
+    <button class="danger-button" type="button" (click)="solicitarBaja()" [disabled]="eliminando">Eliminar mi cuenta</button>
+  </section>
+  <section class="info-note admin-note" *ngIf="perfil && auth.esAdministrador()"><strong>Cuenta administrativa</strong><p>La baja desde esta pantalla no está habilitada para administradores.</p></section>
+
+  <div class="confirm-backdrop" *ngIf="mostrarConfirmacion" role="presentation">
+    <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+      <span class="confirm-icon" aria-hidden="true">!</span><span class="section-kicker">CONFIRMACIÓN DE BAJA</span><h2 id="confirm-title">¿Eliminar tu cuenta?</h2><p id="confirm-desc">Se cerrará tu acceso y se guardará un registro de la baja con la fecha prevista de vencimiento. La política de dos años aplica al registro definido para la baja, no significa conservar indiscriminadamente todos tus datos personales.</p><div class="confirm-actions"><button type="button" class="cancel-button" (click)="cancelarBaja()" [disabled]="eliminando">Cancelar</button><button type="button" class="danger-button" (click)="confirmarBaja()" [disabled]="eliminando">{{ eliminando ? 'Procesando…' : 'Sí, eliminar cuenta' }}</button></div>
+    </section>
+  </div>
+  <footer class="cuenta-footer"><a routerLink="/privacidad">Aviso de privacidad y derechos ARCO</a><span>RecetON · Gestión de cuenta</span></footer>
+</main>

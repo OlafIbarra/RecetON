@@ -1,0 +1,41 @@
+:host{ display:block; position:sticky; bottom:0; z-index:20; }
+
+.barra-inferior{
+  position:relative;
+  height:62px;
+  display:flex; align-items:center; justify-content:space-around;
+  background:var(--papel);
+  border-top:1px solid var(--linea);
+}
+
+.elemento{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:none; border:none;
+  color:var(--tinta-suave); font-size:9.5px; font-weight:500;
+  --tam-icono:20px;
+  padding:6px 10px;
+}
+.elemento.activo{ color:var(--calabaza-os); }
+.punto{ width:4px; height:4px; border-radius:50%; background:var(--calabaza-os); }
+
+.menu-perfil{
+  position:absolute; right:12px; bottom:70px;
+  background:var(--papel); border:1px solid var(--linea); border-radius:14px;
+  padding:14px; display:flex; flex-direction:column; gap:10px;
+  box-shadow:0 20px 40px -20px var(--sombra);
+}
+.menu-perfil-nombre{ font-size:13px; font-weight:600; }
+.menu-perfil-enlace{
+  display:flex; align-items:center; gap:6px;
+  font-size:12.5px; font-weight:500; color:var(--tinta-suave);
+  --tam-icono:14px;
+}
+.boton-salir{ --tam-icono:14px; justify-content:center; }
+
+.menu-perfil-rol{font-size:11px;color:var(--calabaza-os);font-weight:700}.menu-perfil-enlace{border:0;background:transparent;cursor:pointer;text-decoration:none;min-height:30px}
+.elemento{cursor:pointer}.elemento:focus-visible,.menu-perfil button:focus-visible,.menu-perfil a:focus-visible{outline:2px solid var(--calabaza-os);outline-offset:2px}
+
+.barra-inferior{background:rgba(255,255,255,.94);border-top:1px solid rgba(220,231,221,.9);box-shadow:0 -8px 28px rgba(13,47,33,.07);backdrop-filter:blur(18px);min-height:66px}
+.elemento{color:#718078;font-weight:700}.elemento:hover,.elemento.activo{color:var(--bosque)}.elemento.activo{background:#edf6e8;border-radius:13px}.menu-perfil{border-color:#deeadc;border-radius:18px;box-shadow:0 24px 55px rgba(13,47,33,.18);max-width:min(310px,calc(100vw - 24px))}.menu-perfil-enlace{padding:8px;border-radius:9px;color:var(--bosque);font-weight:700}.menu-perfil-enlace:hover{background:#eff7ea}.menu-perfil-rol{color:#317653}
+
+@media(max-width:390px){.elemento{padding:6px 5px;--tam-icono:18px}.etiqueta{font-size:8px}}

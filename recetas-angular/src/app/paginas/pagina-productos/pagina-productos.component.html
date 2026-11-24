@@ -1,0 +1,81 @@
+<main class="tienda-pagina">
+  <header class="tienda-cabecera">
+    <button type="button" class="enlace-volver" (click)="regresarPantallaAnterior()">← Regresar a la pantalla anterior</button>
+    <div class="tienda-titulos">
+      <div>
+        <span class="marca">RecetON</span>
+        <h1>Tienda de productos</h1>
+        <p>Consulta el catálogo y agrega productos a tu carrito.</p>
+      </div>
+      <div class="acciones-cabecera">
+        <button type="button" class="boton-secundario" (click)="irAlCarrito()">Ver carrito</button>
+        <button *ngIf="esAdministrador" type="button" class="boton-principal" (click)="alternarFormulario()">
+          {{ mostrarFormulario ? 'Cancelar' : '+ Registrar producto' }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <p class="mensaje mensaje-error" *ngIf="error" role="alert">{{ error }}</p>
+  <p class="mensaje mensaje-ok" *ngIf="mensaje" role="status">{{ mensaje }}</p>
+
+  <section class="formulario-producto" *ngIf="mostrarFormulario && esAdministrador">
+    <h2>{{ productoEditandoId === null ? 'Registrar producto' : 'Editar producto' }}</h2>
+    <p>Los datos se guardan en la tabla <code>productos</code>. La imagen se muestra desde la receta relacionada, si seleccionas una.</p>
+    <form (ngSubmit)="guardarProducto()">
+      <label>Nombre del producto
+        <input name="nombreProducto" [(ngModel)]="nuevoProducto.nombreProducto" required maxlength="255" />
+      </label>
+      <label>Descripción
+        <textarea name="descripcion" [(ngModel)]="nuevoProducto.descripcion" rows="3"></textarea>
+      </label>
+      <div class="formulario-columnas">
+        <label>Precio (MXN)
+          <input type="number" name="precio" [(ngModel)]="nuevoProducto.precio" min="0" step="0.01" required />
+        </label>
+        <label>Stock disponible
+          <input type="number" name="stock" [(ngModel)]="nuevoProducto.stock" min="0" step="1" required />
+        </label>
+        <label>ID de receta relacionada (opcional)
+          <input type="number" name="idReceta" [(ngModel)]="nuevoProducto.idReceta" min="1" />
+        </label>
+      </div>
+      <button class="boton-principal" type="submit" [disabled]="guardando">{{ guardando ? 'Guardando…' : productoEditandoId === null ? 'Guardar producto' : 'Guardar cambios' }}</button>
+    </form>
+  </section>
+
+  <section class="estado-vacio" *ngIf="cargando">Cargando productos…</section>
+  <section class="estado-vacio" *ngIf="!cargando && !error && productos.length === 0 && esAdministrador">
+    Todavía no hay productos registrados. Puedes registrar el primero con el botón «Registrar producto».
+  </section>
+  <section class="estado-vacio" *ngIf="!cargando && !error && productos.length === 0 && !esAdministrador">
+    Todavía no hay productos disponibles. Vuelve más tarde para consultar las novedades de la tienda.
+  </section>
+
+  <section class="productos-grid" *ngIf="!cargando && productos.length > 0">
+    <article class="producto-card" *ngFor="let producto of productos">
+      <img *ngIf="producto.imagen; else imagenAlternativa" [src]="producto.imagen" [alt]="producto.nombreProducto" loading="lazy" />
+      <ng-template #imagenAlternativa><div class="producto-sin-imagen" aria-label="Sin imagen">RecetON</div></ng-template>
+      <div class="producto-contenido">
+        <span class="producto-relacion" *ngIf="producto.nombreReceta">Receta: {{ producto.nombreReceta }}</span>
+        <h2>{{ producto.nombreProducto }}</h2>
+        <p class="producto-descripcion">{{ producto.descripcion || 'Sin descripción.' }}</p>
+        <div class="producto-pie">
+          <strong>{{ formatoPrecio(producto.precio) }}</strong>
+          <span>Stock: {{ producto.stock }}</span>
+        </div>
+        <label class="cantidad-compra">Cantidad
+          <input type="number" min="1" [max]="producto.stock" [(ngModel)]="cantidades[producto.idProducto]" [ngModelOptions]="{standalone: true}" />
+        </label>
+        <button class="boton-principal boton-ancho" type="button" [disabled]="producto.stock < 1" (click)="agregarAlCarrito(producto)">
+          {{ producto.stock < 1 ? 'Sin existencias' : 'Agregar al carrito' }}
+        </button>
+        <div class="acciones-producto-admin" *ngIf="esAdministrador">
+          <button type="button" class="boton-secundario" (click)="editarProducto(producto)">Editar</button>
+          <button type="button" class="boton-eliminar" (click)="eliminarProducto(producto)">Eliminar</button>
+        </div>
+      </div>
+    </article>
+  </section>
+  <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

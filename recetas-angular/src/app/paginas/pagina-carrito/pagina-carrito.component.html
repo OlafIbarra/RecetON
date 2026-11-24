@@ -1,0 +1,53 @@
+<main class="carrito-pagina">
+  <header class="carrito-cabecera">
+    <div class="carrito-navegacion"><button type="button" class="enlace-volver" (click)="regresarPantallaAnterior()">← Regresar a la pantalla anterior</button><a routerLink="/productos" class="enlace-volver">Seguir comprando</a></div>
+    <span class="marca">RecetON</span>
+    <h1>Mi carrito</h1>
+    <p>Revisa las cantidades y el subtotal antes de continuar.</p>
+  </header>
+
+  <p class="mensaje mensaje-error" *ngIf="error" role="alert">{{ error }}</p>
+  <p class="mensaje mensaje-ok" *ngIf="mensaje" role="status">{{ mensaje }}</p>
+  <section class="estado-vacio" *ngIf="cargando">Cargando carrito…</section>
+
+  <section class="carrito-layout" *ngIf="!cargando && carrito">
+    <div class="carrito-lista" *ngIf="carrito.items.length; else carritoVacio">
+      <article class="carrito-item" *ngFor="let item of carrito.items">
+        <img *ngIf="item.imagen; else sinImagen" [src]="item.imagen" [alt]="item.nombreProducto" loading="lazy" />
+        <ng-template #sinImagen><div class="carrito-imagen-vacia">RecetON</div></ng-template>
+        <div class="carrito-item-datos">
+          <span class="producto-relacion" *ngIf="item.nombreReceta">{{ item.nombreReceta }}</span>
+          <h2>{{ item.nombreProducto }}</h2>
+          <p>{{ item.descripcion || 'Sin descripción.' }}</p>
+          <span class="precio-unitario">{{ formatoPrecio(item.precio) }} por unidad</span>
+          <div class="acciones-item">
+            <label>Cantidad
+              <input type="number" min="1" [max]="item.stock" [(ngModel)]="cantidades[item.idProducto]" [ngModelOptions]="{standalone: true}" />
+            </label>
+            <button type="button" class="boton-secundario" [disabled]="ocupado" (click)="actualizarCantidad(item)">Actualizar</button>
+            <button type="button" class="boton-quitar" [disabled]="ocupado" (click)="quitar(item)">Quitar</button>
+          </div>
+        </div>
+        <strong class="subtotal-item">{{ formatoPrecio(item.subtotal) }}</strong>
+      </article>
+      <button class="boton-quitar boton-vaciar" type="button" [disabled]="ocupado" (click)="vaciar()">Vaciar carrito</button>
+    </div>
+
+    <ng-template #carritoVacio>
+      <section class="estado-vacio carrito-vacio">
+        <h2>Tu carrito está vacío</h2>
+        <p>Cuando agregues productos, aparecerán aquí.</p>
+        <button type="button" class="boton-principal" (click)="continuarTienda()">Explorar productos</button>
+      </section>
+    </ng-template>
+
+    <aside class="resumen-carrito" *ngIf="carrito.items.length">
+      <h2>Resumen</h2>
+      <div><span>Productos</span><strong>{{ carrito.items.length }}</strong></div>
+      <div class="resumen-total"><span>Subtotal</span><strong>{{ formatoPrecio(carrito.subtotal) }}</strong></div>
+      <p>El envío y cualquier otro cargo se calcularán cuando se implemente el proceso de pedidos.</p>
+      <a routerLink="/finalizar-compra" class="boton-principal boton-ancho">Continuar al pedido</a>
+    </aside>
+  </section>
+  <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

@@ -1,0 +1,48 @@
+:host{ display:block; min-height:100vh; background:var(--tinta); }
+
+.reloj{
+  max-width:260px; margin:0 auto; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:12px; padding:12px 0; color:#F4ECDD;
+}
+
+.reloj-pista{
+  width:100%; display:flex;
+  overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none;
+}
+.reloj-pista::-webkit-scrollbar{ display:none; }
+
+.reloj-puntos{ display:flex; gap:4px; }
+.reloj-puntos button{border:0;padding:0;width:5px;height:5px;border-radius:50%;background:rgba(244,236,221,.3);cursor:pointer}
+.reloj-puntos button.activo{width:12px;border-radius:3px;background:var(--calabaza)}
+
+
+.reloj-mensaje{ font-size:11px; color:#C9BCA4; padding:0 16px; text-align:center; }
+
+.reloj-navegacion{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;max-width:250px}.reloj-boton{display:inline-flex;align-items:center;justify-content:center;gap:4px;--tam-icono:12px;cursor:pointer;text-decoration:none}
+.reloj-boton{
+  background:rgba(244,236,221,.12); color:#F4ECDD;
+  border:none; border-radius:999px;
+  padding:4px 14px; font-size:10px; font-weight:600;
+}
+
+.reloj-aviso{ color:var(--calabaza); font-weight:600; }
+
+/* Adaptación fluida para reloj, móvil y escritorio sin marcos de dispositivo. */
+:host{min-height:100vh;background:radial-gradient(circle at 50% 0%,#1f6245,#0a2a20 54%,#061d16);color:#f4f8ee;}
+.reloj{width:min(100%,1160px);max-width:none;min-height:100vh;margin:0 auto;padding:clamp(18px,4vw,46px);gap:clamp(14px,2.5vw,26px);box-sizing:border-box;justify-content:center;color:#f3f8ee}
+.reloj-pista{border-radius:28px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.reloj-puntos{gap:7px}.reloj-puntos button{width:7px;height:7px}.reloj-puntos button.activo{width:22px;background:var(--menta)}
+.reloj-mensaje{font-size:.9rem;color:#d8e8d9;line-height:1.5}
+.reloj-navegacion{max-width:560px;width:100%;gap:10px}
+.reloj-boton{min-width:44px;min-height:44px;gap:7px;padding:9px 17px;font-size:.82rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(10px)}
+.reloj-boton:hover{background:rgba(216,242,165,.18);color:#e9ffbb}
+.reloj-aviso{color:var(--menta)}
+.reloj .pie-legal{width:100%;border-color:rgba(255,255,255,.17);color:#d9e8db;font-size:.76rem}
+.reloj .pie-legal a{color:var(--menta)}
+@media(max-width:500px){.reloj{padding:16px 12px;gap:14px}.reloj-boton{min-width:42px;flex:1;padding:8px}.reloj-navegacion{gap:6px}.reloj .pie-legal{justify-content:center}}
+@media(max-width:300px){.reloj{padding:8px 6px}.reloj-boton{min-width:34px;padding:5px}.reloj .pie-legal{font-size:.68rem}}
+
+/* Descubre recetas externas: bloque complementario, sin mezclarlo con el catálogo local. */
+.reloj-descubre{width:min(100%, 520px);margin:14px auto 8px;padding:0 5px;}
+.reloj-descubre app-descubre-recetas{display:block;}

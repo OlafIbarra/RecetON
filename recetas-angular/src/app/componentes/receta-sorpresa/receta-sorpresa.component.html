@@ -1,0 +1,21 @@
+<div class="receta-sorpresa">
+  <div class="receta-sorpresa-encabezado">
+    <span class="receta-sorpresa-titulo">Receta sorpresa</span>
+    <span class="receta-sorpresa-fuente">API externa · TheMealDB</span>
+  </div>
+
+  <p class="mensaje-cargando" *ngIf="cargando">Buscando una receta al azar…</p>
+  <p class="mensaje-error" *ngIf="mensajeError">{{ mensajeError }}</p>
+
+  <div class="receta-sorpresa-cuerpo" *ngIf="!cargando && receta as r">
+    <div class="receta-sorpresa-foto"><img [src]="r.imagen" [alt]="r.nombre"></div>
+    <div>
+      <div class="receta-sorpresa-nombre">{{ r.nombre }}</div>
+      <div class="receta-sorpresa-meta">{{ r.categoria }} · {{ r.origen }}</div>
+    </div>
+  </div>
+
+  <button class="receta-sorpresa-boton" type="button" (click)="otraReceta.emit()" [disabled]="cargando">
+    Otra sugerencia
+  </button>
+</div>

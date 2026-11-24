@@ -1,0 +1,22 @@
+<section class="reloj">
+  <p class="reloj-mensaje" *ngIf="cargando">Cargando…</p>
+  <p class="reloj-mensaje reloj-aviso" *ngIf="!cargando && modoRespaldo">Datos de ejemplo (sin backend)</p>
+  <p class="reloj-mensaje" *ngIf="!cargando && !recetasDelDia.length">No hay recetas registradas.</p>
+
+  <div class="reloj-pista" (scroll)="alDesplazar($event)" *ngIf="recetasDelDia.length > 0">
+    <app-tarjeta-reloj *ngFor="let receta of recetasDelDia" [receta]="receta"></app-tarjeta-reloj>
+  </div>
+  <div class="reloj-puntos" *ngIf="recetasDelDia.length > 0">
+    <button *ngFor="let receta of recetasDelDia; let i = index" type="button" [class.activo]="i === indiceActual"
+            (click)="irAReceta(i)" [attr.aria-label]="'Ver receta ' + (i + 1)"></button>
+  </div>
+  <div class="reloj-descubre"><app-descubre-recetas dispositivo="reloj"></app-descubre-recetas></div>
+  <nav class="reloj-navegacion" aria-label="Accesos rápidos">
+    <a class="reloj-boton" routerLink="/favoritos" aria-label="Favoritos"><app-icono nombre="corazon"></app-icono></a>
+    <a class="reloj-boton" routerLink="/productos" aria-label="Tienda"><app-icono nombre="tienda"></app-icono></a>
+    <a class="reloj-boton" routerLink="/carrito" aria-label="Carrito"><app-icono nombre="carrito"></app-icono></a>
+    <a class="reloj-boton" routerLink="/inicio" aria-label="Cambiar pantalla"><app-icono nombre="inicio"></app-icono></a>
+    <button class="reloj-boton" type="button" (click)="cerrarSesion()" aria-label="Cerrar sesión"><app-icono nombre="salir"></app-icono></button>
+  </nav>
+  <footer class="pie-legal"><a href="/privacidad">Privacidad y ARCO</a></footer>
+</section>

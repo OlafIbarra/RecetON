@@ -1,0 +1,28 @@
+<main class="pedidos-pagina">
+  <header class="pedidos-cabecera"><button type="button" class="enlace-volver" (click)="regresarPantallaAnterior()">← Regresar a la pantalla anterior</button><span class="marca">RecetON · TU CUENTA</span><h1>Mis pedidos</h1><p>Consulta el estado y el resumen de los pedidos que has registrado.</p></header>
+  <p *ngIf="mensaje" class="aviso aviso-ok" role="status">{{ mensaje }}</p>
+  <p *ngIf="error" class="aviso aviso-error" role="alert">{{ error }}</p>
+  <div *ngIf="cargando" class="estado-pedidos">Cargando tu historial…</div>
+  <section *ngIf="!cargando && !pedidos.length" class="pedidos-vacio"><div class="vacio-icono">↗</div><h2>Todavía no tienes pedidos</h2><p>Cuando confirmes un pedido de la tienda, aparecerá en esta sección.</p><a routerLink="/productos" class="boton-principal">Explorar la tienda</a></section>
+  <section class="pedidos-layout" *ngIf="!cargando && pedidos.length">
+    <div class="pedidos-lista">
+      <article class="pedido-tarjeta" *ngFor="let pedido of pedidos" [class.pedido-abierto]="detalle?.idPedido === pedido.idPedido">
+        <div class="pedido-superior"><div><span class="pedido-numero">PEDIDO #{{ pedido.idPedido }}</span><h2>{{ pedido.fechaPedido | date:'d MMM y, HH:mm' }}</h2></div><span class="estado-etiqueta" [ngClass]="claseEstado(pedido.estado)">{{ pedido.estado }}</span></div>
+        <div class="pedido-resumen"><div><small>Artículos</small><strong>{{ pedido.cantidadArticulos }}</strong></div><div><small>Total</small><strong>{{ formatoPrecio(pedido.total) }}</strong></div></div>
+        <button type="button" class="boton-detalle" (click)="verDetalle(pedido)">{{ detalle?.idPedido === pedido.idPedido ? 'Ocultar detalle' : 'Ver detalle del pedido' }} <span aria-hidden="true">{{ detalle?.idPedido === pedido.idPedido ? '−' : '＋' }}</span></button>
+      </article>
+    </div>
+    <aside class="pedido-detalle" *ngIf="detalle || cargandoDetalle">
+      <div *ngIf="cargandoDetalle" class="estado-pedidos">Cargando detalle…</div>
+      <ng-container *ngIf="detalle && !cargandoDetalle">
+        <span class="pedido-numero">DETALLE · PEDIDO #{{ detalle.idPedido }}</span><h2>Tu pedido</h2>
+        <div class="detalle-linea" *ngFor="let item of detalle.items"><div><strong>{{ item.nombreProducto || 'Producto retirado del catálogo' }}</strong><small>{{ item.cantidad }} × {{ formatoPrecio(item.precioUnitario) }}</small></div><b>{{ formatoPrecio(item.subtotal) }}</b></div>
+        <div class="detalle-total"><span>Total registrado</span><strong>{{ formatoPrecio(detalle.total) }}</strong></div>
+        <h3>Entrega</h3><p>{{ detalle.direccionEnvio.calle }} {{ detalle.direccionEnvio.numero }}, {{ detalle.direccionEnvio.colonia }}</p><p>{{ detalle.direccionEnvio.ciudad }}, {{ detalle.direccionEnvio.estado }} · C. P. {{ detalle.direccionEnvio.codigoPostal }}</p>
+        <h3>Método elegido</h3><p>{{ detalle.metodoPago.tipo }}<span *ngIf="detalle.metodoPago.ultimos4Digitos"> · termina en {{ detalle.metodoPago.ultimos4Digitos }}</span></p>
+        <p class="pedido-demo">Este proyecto registra pedidos de demostración. No se procesó ningún cobro real.</p>
+      </ng-container>
+    </aside>
+  </section>
+  <footer class="pie-legal"><a routerLink="/privacidad">Aviso de privacidad y Derechos ARCO</a><a routerLink="/carrito">Ir al carrito</a></footer>
+</main>

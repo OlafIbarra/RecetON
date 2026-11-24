@@ -1,0 +1,10 @@
+<div class="lista-categorias" [class.grande]="grande">
+  <button class="categoria-item" type="button" *ngFor="let categoria of categorias"
+          (click)="seleccionarCategoria.emit(categoria)"
+          [class.seleccionada]="categoriaActivaId === categoria.id"
+          [attr.aria-pressed]="categoriaActivaId === categoria.id"
+          [attr.aria-label]="'Filtrar por categoría ' + categoria.nombre">
+    <span class="categoria-foto"><img [src]="categoria.imagen" [alt]="categoria.nombre" loading="lazy"></span>
+    <span class="categoria-nombre">{{ categoria.nombre }}</span>
+  </button>
+</div>

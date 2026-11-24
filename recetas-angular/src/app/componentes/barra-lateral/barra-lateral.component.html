@@ -1,0 +1,18 @@
+<nav class="barra-lateral" aria-label="Navegación principal">
+  <a class="logo marca" routerLink="/inicio" aria-label="RecetON, volver al selector de pantallas"><img src="/assets/icons/icon-192x192.png" alt=""><span>RecetON</span></a>
+  <a class="enlace" *ngFor="let enlace of enlaces; let i = index"
+     [class.activo]="i === indiceActivo" [routerLink]="enlace.ruta">
+    <app-icono [nombre]="enlace.icono"></app-icono>{{ enlace.etiqueta }}
+  </a>
+  <a class="enlace enlace-cuenta" routerLink="/mi-cuenta"><app-icono nombre="perfil"></app-icono> Mi cuenta</a>
+  <a *ngIf="esAdministrador" class="enlace enlace-admin" routerLink="/administracion"><app-icono nombre="lista"></app-icono> Administración</a>
+  <a class="enlace enlace-privacidad" routerLink="/privacidad">Privacidad y ARCO</a>
+  <div class="usuario">
+    <div class="usuario-fila">
+      <div class="avatar"><app-icono nombre="perfil"></app-icono></div>
+      <div><div class="nombre">{{ nombreUsuario }}</div><div class="rol">{{ etiquetaRol }}</div></div>
+    </div>
+    <a class="cambiar-pantalla" routerLink="/inicio"><app-icono nombre="lista"></app-icono> Cambiar pantalla</a>
+    <button class="boton-salir" type="button" (click)="cerrarSesion()"><app-icono nombre="salir"></app-icono> Cerrar sesión</button>
+  </div>
+</nav>

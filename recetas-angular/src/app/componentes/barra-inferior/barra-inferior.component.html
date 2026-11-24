@@ -1,0 +1,23 @@
+<nav class="barra-inferior" aria-label="Navegación principal">
+  <button *ngFor="let elemento of elementos; let i = index" type="button" class="elemento"
+          [class.activo]="esElementoActivo(elemento) || (i === indiceActivo && !elemento.ruta)" (click)="ejecutarAccion(elemento)"
+          [attr.aria-label]="elemento.etiqueta" [attr.aria-expanded]="elemento.icono === 'perfil' ? menuPerfilAbierto : null">
+    <app-icono [nombre]="elemento.icono"></app-icono>
+    <span class="etiqueta" *ngIf="mostrarEtiquetas">{{ elemento.etiqueta }}</span>
+    <span class="punto" *ngIf="i === indiceActivo"></span>
+  </button>
+
+  <div class="menu-perfil" *ngIf="menuPerfilAbierto">
+    <div class="menu-perfil-nombre">{{ nombreUsuario }}</div>
+    <div class="menu-perfil-rol">{{ etiquetaRol }}</div>
+    <button class="menu-perfil-enlace" type="button" (click)="irAExplorar()"><app-icono nombre="brujula"></app-icono> Explorar recetas</button>
+    <a class="menu-perfil-enlace" routerLink="/favoritos" (click)="menuPerfilAbierto = false"><app-icono nombre="corazon"></app-icono> Mis favoritos</a>
+    <a class="menu-perfil-enlace" routerLink="/productos" (click)="menuPerfilAbierto = false"><app-icono nombre="tienda"></app-icono> Tienda</a>
+    <a class="menu-perfil-enlace" routerLink="/carrito" (click)="menuPerfilAbierto = false"><app-icono nombre="carrito"></app-icono> Mi carrito</a>
+    <a class="menu-perfil-enlace" routerLink="/mis-pedidos" (click)="menuPerfilAbierto = false"><app-icono nombre="lista"></app-icono> Mis pedidos</a>
+    <a class="menu-perfil-enlace" routerLink="/mi-cuenta" (click)="menuPerfilAbierto = false"><app-icono nombre="perfil"></app-icono> Mi cuenta</a>
+    <a class="menu-perfil-enlace" routerLink="/privacidad" (click)="menuPerfilAbierto = false">Privacidad y derechos ARCO</a>
+    <a *ngIf="esAdministrador" class="menu-perfil-enlace" routerLink="/administracion" (click)="menuPerfilAbierto = false"><app-icono nombre="lista"></app-icono> Administración</a>
+    <button class="boton-salir" type="button" (click)="cerrarSesion()"><app-icono nombre="salir"></app-icono> Cerrar sesión</button>
+  </div>
+</nav>

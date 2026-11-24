@@ -1,0 +1,21 @@
+:host{ display:block; flex:0 0 100%; scroll-snap-align:center; }
+
+.tarjeta-reloj{
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:0 16px; text-align:center; color:#F4ECDD;
+}
+.insignia{
+  font-size:9px; font-weight:600; letter-spacing:.04em;
+  color:var(--calabaza); background:rgba(201,122,43,.2);
+  padding:3px 9px; border-radius:999px;
+}
+.foto{
+  width:96px; height:96px; border-radius:50%; overflow:hidden;
+  border:2px solid rgba(244,236,221,.25);
+}
+.nombre{ font-family:var(--tipo-serif); font-weight:600; font-size:15px; line-height:1.2; }
+.tiempo{ font-size:10.5px; color:#C9BCA4; }
+
+.tarjeta-reloj{text-decoration:none;color:inherit}.tarjeta-reloj:focus-visible{outline:2px solid var(--calabaza);outline-offset:3px}.enlace-detalle{font-size:10px;font-weight:700;color:var(--calabaza)}
+
+.tarjeta-reloj{gap:14px;padding:clamp(12px,3vw,28px);align-items:center}.tarjeta-reloj .foto{width:clamp(112px,18vw,190px);height:auto;aspect-ratio:1;border:4px solid rgba(216,242,165,.55);box-shadow:0 16px 35px rgba(0,0,0,.22)}.tarjeta-reloj .insignia{background:rgba(216,242,165,.15);color:var(--menta);font-size:.75rem;padding:6px 12px}.tarjeta-reloj .nombre{font-size:clamp(1.3rem,3vw,2.2rem);letter-spacing:-.04em}.tarjeta-reloj .tiempo{font-size:.88rem}.tarjeta-reloj .enlace-detalle{display:inline-flex;padding:10px 15px;border:1px solid rgba(216,242,165,.28);border-radius:999px;background:rgba(216,242,165,.09);color:var(--menta);font-size:.83rem}

@@ -1,0 +1,44 @@
+<div class="tv">
+  <app-barra-lateral [indiceActivo]="0"></app-barra-lateral>
+
+  <main class="tv-contenido">
+    <header class="encabezado">
+      <div>
+        <h1 class="titulo-pagina">Explorar Recetas del Mundo</h1>
+        <p class="subtitulo-pagina">Encuentra las mejores comidas con ingredientes frescos hoy.</p>
+      </div>
+      <app-barra-busqueda class="buscador" marcador="Buscar recetas, platos o cocina…" (cambioTexto)="alBuscar($event)">
+      </app-barra-busqueda>
+    </header>
+
+    <app-banner-principal
+      tamano="grande"
+      imagen="https://picsum.photos/seed/calabazachef/1600/600"
+      insignia="Recomendación del chef"
+      titulo="Sabores de Otoño: Recetas Especiales con Calabaza y Especias"
+      subtitulo="Descubre cómo preparar platos cálidos que reconforten el alma en esta temporada.">
+    </app-banner-principal>
+
+    <section>
+      <div class="encabezado-seccion">
+        <h2 class="titulo-seccion">Categorías Populares</h2>
+        <button class="ver-mas boton-enlace" type="button" (click)="limpiarFiltros()">Ver todas ›</button>
+      </div>
+      <app-lista-categorias [categorias]="categorias" [grande]="true" [categoriaActivaId]="categoriaActiva?.id ?? null" (seleccionarCategoria)="alSeleccionarCategoria($event)"></app-lista-categorias>
+    </section>
+
+
+    <section>
+      <div class="encabezado-seccion">
+        <h2 class="titulo-seccion">Recetas de RecetON</h2>
+      </div>
+      <p class="mensaje-cargando" *ngIf="cargando">Cargando recetas…</p>
+      <p class="aviso-respaldo" *ngIf="!cargando && modoRespaldo">Mostrando recetas de ejemplo.</p>
+      <app-cuadricula-recetas *ngIf="!cargando" [recetas]="recetasFiltradas" [columnas]="4">
+      </app-cuadricula-recetas>
+    </section>
+
+    <section class="seccion-descubre-recetas"><app-descubre-recetas dispositivo="tv"></app-descubre-recetas></section>
+    <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>
+</div>

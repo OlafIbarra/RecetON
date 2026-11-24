@@ -1,0 +1,8 @@
+<div class="banner" [ngClass]="'banner--' + tamano">
+  <div class="banner-imagen"><img [src]="imagen" [alt]="titulo"></div>
+  <div class="banner-contenido">
+    <span class="banner-insignia" *ngIf="insignia">{{ insignia }}</span>
+    <div class="banner-titulo">{{ titulo }}</div>
+    <p class="banner-subtitulo" *ngIf="subtitulo">{{ subtitulo }}</p>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+
+:host{display:block;min-height:100%;background:var(--fondo,#faf8f2);color:var(--tinta,#282820)}
+.administracion-pagina{width:min(1280px,100%);margin:0 auto;padding:26px clamp(14px,3vw,34px) 50px;display:grid;gap:18px}
+.administracion-cabecera{display:grid;gap:14px}
+.enlace-volver{padding:0;border:0;background:transparent;font:inherit;cursor:pointer;font-weight:600;color:var(--tinta-suave,#6c6b61);text-decoration:none}
+.cabecera-titulo{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.marca{font-size:12px;letter-spacing:.14em;font-weight:800;color:var(--calabaza-os,#8b4d24)}
+h1{font-family:var(--tipo-serif,Georgia,serif);font-size:clamp(28px,4vw,42px);margin:6px 0}
+.cabecera-titulo p,.nota{color:var(--tinta-suave,#6c6b61);margin:0;line-height:1.55}
+.pestanas-admin{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--linea,#e7e0d4);padding-bottom:12px}
+.pestanas-admin button,.acciones-tabla button,.acciones-tabla a{border:1px solid var(--linea,#e7e0d4);background:#fffdf8;padding:9px 12px;border-radius:9px;color:var(--tinta,#282820);text-decoration:none;font:inherit;font-size:13px;cursor:pointer}
+.pestanas-admin button.activa,.boton-principal{background:var(--calabaza-os,#8b4d24);color:white;border-color:var(--calabaza-os,#8b4d24)}
+.seccion-admin{display:grid;gap:14px;min-width:0}.seccion-admin h2{font-size:22px;margin:0}.seccion-admin h3{margin:12px 0 0;font-size:18px}
+.formulario-admin{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;background:#fffdf8;border:1px solid var(--linea,#e7e0d4);border-radius:16px;padding:18px}
+.formulario-admin label{display:grid;gap:6px;font-size:13px;font-weight:650;min-width:0}
+.formulario-admin input,.formulario-admin textarea,.formulario-admin select{width:100%;min-width:0;border:1px solid var(--linea,#d7d0c2);background:white;border-radius:9px;padding:10px 11px;font:inherit;font-size:14px;color:inherit;box-sizing:border-box}
+.campo-completo{grid-column:1/-1}.checkbox-admin{display:flex!important;align-items:center;gap:9px!important}.checkbox-admin input{width:auto}
+.acciones-admin{display:flex;flex-wrap:wrap;gap:9px}.boton-principal,.boton-secundario{border:1px solid var(--linea,#d7d0c2);border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer;text-decoration:none}.boton-secundario{background:white;color:inherit}.boton-principal:disabled{opacity:.65;cursor:wait}
+.tabla-contenedor{width:100%;overflow:auto;border:1px solid var(--linea,#e7e0d4);border-radius:12px;background:#fffdf8}table{width:100%;border-collapse:collapse;min-width:620px}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--linea,#eee9df);font-size:13px}th{background:#f5f0e6;font-weight:750}td small{display:block;color:var(--tinta-suave,#6c6b61);margin-top:4px}.acciones-tabla{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.acciones-tabla button,.acciones-tabla a{font-size:12px;padding:7px 9px}.acciones-tabla .peligro{color:#a32b22}.mensaje{padding:12px 14px;border-radius:10px;margin:0}.mensaje-ok{background:#e8f4e8;color:#24582b}.mensaje-error{background:#fff0ed;color:#8e2b20}.estado{color:var(--tinta-suave,#6c6b61)}
+@media(max-width:700px){.cabecera-titulo{align-items:flex-start;flex-direction:column}.formulario-admin{grid-template-columns:minmax(0,1fr);padding:13px}.campo-completo{grid-column:auto}.acciones-admin>*{flex:1 1 auto}.pestanas-admin button{flex:1 1 42%}}
+
+/* Panel administrativo profesional, adaptable a pantallas pequeñas. */
+:host{background:linear-gradient(160deg,#f1f6ef,#f8faf6 44%,#eef5ec)!important;color:var(--tinta)}
+.administracion-pagina{width:min(100%,1480px);padding:clamp(14px,3vw,42px);gap:22px}
+.administracion-cabecera{padding:clamp(20px,3.5vw,38px);border-radius:26px;color:#fff;background:radial-gradient(circle at 88% 10%,rgba(216,242,165,.18),transparent 28%),linear-gradient(130deg,#0b2a20,#1a563b);box-shadow:0 22px 48px rgba(9,39,30,.15)}
+.administracion-cabecera .enlace-volver{color:#e0efdf}.administracion-cabecera .marca{color:#d8f2a5}.administracion-cabecera h1{font-size:clamp(2rem,4vw,3.3rem);letter-spacing:-.05em}.cabecera-titulo p{color:#d4e5d6}.administracion-cabecera .boton-secundario{background:#d8f2a5;border-color:#d8f2a5;color:#173b2a}
+.pestanas-admin{border:0;padding:5px;gap:7px;background:#e6efe4;border-radius:16px;display:flex}
+.pestanas-admin button{border:1px solid transparent;background:transparent;border-radius:12px;font-weight:800;padding:11px 16px}.pestanas-admin button.activa{background:#fff;color:var(--bosque);border-color:#d8e5d7;box-shadow:0 5px 15px rgba(13,47,33,.06)}
+.seccion-admin{gap:16px;padding:clamp(16px,2.5vw,28px);border:1px solid #e0e9df;border-radius:22px;background:rgba(255,255,255,.92);box-shadow:0 10px 28px rgba(13,47,33,.05)}
+.seccion-admin h2{font-size:clamp(1.3rem,2.4vw,1.75rem);letter-spacing:-.035em}.formulario-admin{border-radius:18px;border-color:#e0eade;background:#f8fbf6;padding:clamp(14px,2vw,22px);gap:16px}
+.formulario-admin label{font-size:.86rem;font-weight:800}.formulario-admin input,.formulario-admin textarea,.formulario-admin select{border-radius:12px;border-color:#d3e1d4;padding:12px 13px;background:white}
+.boton-principal{background:linear-gradient(135deg,#174c35,#2f7a52);border:1px solid #174c35;border-radius:12px;padding:11px 16px;box-shadow:0 7px 16px rgba(18,61,44,.12)}.boton-secundario{border-radius:12px;background:#fff;border-color:#d5e3d6;padding:11px 15px}
+.tabla-contenedor{border-color:#deeadc;border-radius:16px;box-shadow:0 5px 18px rgba(13,47,33,.04)}table{min-width:650px}th{background:#eef5e9;color:#234b35}td,th{padding:14px 13px;border-color:#e6eee4}.acciones-tabla button,.acciones-tabla a{border-radius:9px;font-weight:700;background:#f5f9f2}.acciones-tabla .peligro{background:#fff0ef;color:#9c3440}
+@media(max-width:640px){.administracion-pagina{padding:12px}.administracion-cabecera{padding:21px;border-radius:20px}.cabecera-titulo{gap:14px}.pestanas-admin{overflow-x:auto}.pestanas-admin button{flex:0 0 auto}.seccion-admin{padding:13px;border-radius:18px}.tabla-contenedor{margin-inline:-2px}}
+
+.acciones-admin-cabecera{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+@media(max-width:560px){.acciones-admin-cabecera{width:100%}.acciones-admin-cabecera a{flex:1;text-align:center}}

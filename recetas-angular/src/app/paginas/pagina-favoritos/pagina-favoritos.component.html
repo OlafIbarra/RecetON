@@ -1,0 +1,45 @@
+<main class="pagina-favoritos">
+  <header class="cabecera-favoritos">
+    <div>
+      <span class="marca">RecetON</span>
+      <h1>Mis recetas favoritas</h1>
+      <p>Recetas que guardaste para encontrarlas fácilmente.</p>
+    </div>
+    <button class="boton-secundario" type="button" (click)="volverAlInicio()">← Regresar a la pantalla anterior</button>
+  </header>
+
+  <p class="mensaje-exito" *ngIf="mensaje" role="status">{{ mensaje }}</p>
+  <p class="mensaje-error" *ngIf="mensajeError" role="alert">{{ mensajeError }}</p>
+  <p class="estado-carga" *ngIf="cargando" role="status">Cargando tus favoritos…</p>
+
+  <section class="rejilla-favoritos" *ngIf="!cargando && recetas.length">
+    <article class="tarjeta-favorito" *ngFor="let receta of recetas">
+      <button class="contenido-tarjeta" type="button" (click)="abrirReceta(receta)" [attr.aria-label]="'Ver detalle de ' + receta.nombre">
+        <img [src]="receta.imagen" [alt]="receta.nombre" loading="lazy" />
+        <div class="datos-tarjeta">
+          <span class="etiqueta" *ngIf="receta.etiqueta">{{ receta.etiqueta }}</span>
+          <h2>{{ receta.nombre }}</h2>
+          <p *ngIf="receta.descripcion">{{ receta.descripcion }}</p>
+          <div class="metadatos">
+            <span *ngIf="receta.tiempo">⏱ {{ receta.tiempo }}</span>
+            <span>★ {{ receta.calificacion | number:'1.1-1' }}</span>
+          </div>
+        </div>
+      </button>
+      <div class="acciones-tarjeta">
+        <button class="boton-accion" type="button" (click)="abrirReceta(receta)">Ver receta</button>
+        <button class="boton-quitar" type="button" (click)="quitarFavorito(receta)" [disabled]="recetaEnProcesoId === receta.id">
+          {{ recetaEnProcesoId === receta.id ? 'Quitando…' : '♥ Quitar favorito' }}
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <section class="sin-favoritos" *ngIf="!cargando && !mensajeError && !recetas.length">
+    <div class="corazon" aria-hidden="true">♡</div>
+    <h2>Aún no tienes recetas favoritas</h2>
+    <p>Abre una receta y pulsa «Agregar a favoritos» para guardarla aquí.</p>
+    <button class="boton-accion" type="button" (click)="volverAlInicio()">Regresar a la pantalla anterior</button>
+  </section>
+  <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>

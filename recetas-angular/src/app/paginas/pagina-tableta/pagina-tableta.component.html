@@ -1,0 +1,41 @@
+<div class="tableta">
+  <main class="tableta-contenido">
+
+    <header class="encabezado">
+      <h1 class="titulo-pagina">Explorar Recetas</h1>
+      <app-barra-busqueda class="buscador" marcador="Buscar recetas por nombre…" (cambioTexto)="alBuscar($event)">
+      </app-barra-busqueda>
+      <app-pestanas-navegacion class="pestanas" [indiceActivo]="0"></app-pestanas-navegacion>
+    </header>
+
+    <app-banner-principal
+      tamano="mediano"
+      imagen="https://picsum.photos/seed/otonopera/1200/400"
+      titulo="Descubre las mejores recetas de la temporada de otoño">
+    </app-banner-principal>
+
+    <section>
+      <div class="encabezado-seccion">
+        <h2 class="titulo-seccion">Categorías populares</h2>
+        <button class="ver-mas boton-enlace" type="button" (click)="limpiarFiltros()">Ver todas ›</button>
+      </div>
+      <app-lista-categorias [categorias]="categorias" [categoriaActivaId]="categoriaActiva?.id ?? null" (seleccionarCategoria)="alSeleccionarCategoria($event)"></app-lista-categorias>
+    </section>
+
+
+    <section>
+      <div class="encabezado-seccion">
+        <h2 class="titulo-seccion">Recetas de RecetON</h2>
+      </div>
+      <p class="mensaje-cargando" *ngIf="cargando">Cargando recetas…</p>
+      <p class="aviso-respaldo" *ngIf="!cargando && modoRespaldo">Mostrando recetas de ejemplo.</p>
+      <app-cuadricula-recetas *ngIf="!cargando" [recetas]="recetasFiltradas" [columnas]="3">
+      </app-cuadricula-recetas>
+    </section>
+
+    <section class="seccion-descubre-recetas"><app-descubre-recetas dispositivo="tableta"></app-descubre-recetas></section>
+    <footer class="pie-legal"><a href="/privacidad">Aviso de privacidad y Derechos ARCO</a><span class="pie-marca">RecetON · Cocina con confianza</span></footer>
+</main>
+
+  <app-barra-inferior [indiceActivo]="-1" [rutaExplorar]="'/tableta'" [mostrarEtiquetas]="true"></app-barra-inferior>
+</div>
