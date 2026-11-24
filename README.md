@@ -137,8 +137,6 @@ La carpeta `documentacion/` reúne notas técnicas, auditorías e instrucciones 
 Proyecto académico desarrollado por:
 
 - José Olaf Ibarra García
-- Mariana Maldonado Hernández
-- Oliver Yair Tolentino Hernández
 
 ## Estado del proyecto
 
